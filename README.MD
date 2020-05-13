@@ -1,5 +1,23 @@
-TODO
 
+
+```
+cp secrets/example.env.example secrets/dev.env
+```
+
+Edit variables
+
+```
+cd gce
+bash deploy.sh
+```
+
+
+
+
+
+
+TODO
+Fix https
 Fix Main.py
 Test app.yaml disk options
 Update project to use env name instead of a project folder

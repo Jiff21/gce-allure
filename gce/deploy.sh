@@ -15,21 +15,27 @@
 set -ex
 
 # [START getting_started_gce_create_instance]
-MY_INSTANCE_NAME="my-app-instance"
+INSTANCE_NAME="hard-coded-name"
 ZONE=us-west2-b
 
-gcloud compute instances create $MY_INSTANCE_NAME \
-    --image-family=debian-9 \
-    --image-project=debian-cloud \
-    --machine-type=g1-small \
+gcloud compute instances create $INSTANCE_NAME \
+    --image=ubuntu-1604-xenial-v20200429 \
+    --image-project=ubuntu-os-cloud \
+    --machine-type=f1-micro \
     --scopes userinfo-email,cloud-platform \
     --metadata-from-file startup-script=startup-script.sh \
     --zone $ZONE \
-    --tags http-server
+    --tags http-server,https-server
 # [END getting_started_gce_create_instance]
 
-gcloud compute firewall-rules create default-allow-https-8080 \
+gcloud compute firewall-rules create default-allow-http-8080 \
     --allow tcp:8080 \
     --source-ranges 0.0.0.0/0 \
+    --target-tags http-server \
+    --description "Allow port 8080 access to http-server"
+
+gcloud compute firewall-rules create default-allow-https-443 \
+    --allow tcp:443 \
+    --source-ranges 0.0.0.0/0 \
     --target-tags https-server \
-    --description "Allow port 8080 access to https-server"
+    --description "Allow port 8080 access to http-server"
