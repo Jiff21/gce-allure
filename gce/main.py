@@ -76,15 +76,24 @@ app.secret_key = FLASK_SECRET
 # https://medium.com/@trstringer/logging-flask-and-gunicorn-the-manageable-way-2e6f0b8beb2f
 # only keep if I need that logging.
 
+# # Configure logging
+# app.debug = True
+# if app.debug:
+#     client = google.cloud.logging.Client()
+#     client.get_default_handler()
+#     # client.setup_logging()
+#     logging.basicConfig(handlers=[client], level=os.environ.get('LOG_LEVEL', 'INFO'))
+#     # log = logging.getLogger('Allure-Hub')
+#     logging.info('Logging setup in SEARCHFORTHIS1')
+
 # Configure logging
-app.debug = True
-if app.debug:
-    client = google.cloud.logging.Client()
-    client.get_default_handler()
-    # client.setup_logging()
-    logging.basicConfig(handlers=[client], level=os.environ.get('LOG_LEVEL', 'INFO'))
-    # log = logging.getLogger('Allure-Hub')
-    logging.info('Logging setup in SEARCHFORTHIS1')
+
+client = google.cloud.logging.Client()
+client.get_default_handler()
+client.setup_logging()
+logging.basicConfig(level=os.environ.get('LOG_LEVEL', 'INFO'))
+# log = logging.getLogger('Allure-Hub')
+logging.info('Logging setup in SEARCHFORTHIS1')
 
 
 def allowed_file(filename):
