@@ -19,7 +19,7 @@ from werkzeug.utils import secure_filename
 
 
 
-IS_APPENGINE = os.environ.get('IS_APPENGINE', False)
+IS_APPENGINE = os.environ.get('IS_APPENGINE', True)
 ALLOWED_EXTENSIONS = set(['json', 'properties'])
 
 # Create a projects folder

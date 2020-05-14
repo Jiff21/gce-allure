@@ -15,8 +15,8 @@ useradd -m -d /home/pythonapp pythonapp
 
 # Fetch source code
 export HOME=/root
-git clone https://github.com/GoogleCloudPlatform/getting-started-python.git /opt/app
-
+#git clone https://github.com/GoogleCloudPlatform/getting-started-python.git /opt/app
+git clone git@github.com:Jiff21/gce-allure.git /opt/app
 # Python environment setup
 virtualenv -p python3 /opt/app/gce/env
 source /opt/app/gce/env/bin/activate
