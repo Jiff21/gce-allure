@@ -15,13 +15,13 @@
 set -ex
 
 # [START getting_started_gce_create_instance]
-INSTANCE_NAME="hard-coded-name"
-ZONE=us-west2-b
+# INSTANCE_NAME & ZONE loaded through sourcing secrets file
 
-gcloud compute instances create $INSTANCE_NAME \
+gcloud compute --project=$PROJECT_ID instances create $INSTANCE_NAME \
     --image=ubuntu-1604-xenial-v20200429 \
     --image-project=ubuntu-os-cloud \
     --machine-type=f1-micro \
+    --no-boot-disk-auto-delete \
     --scopes userinfo-email,cloud-platform \
     --metadata-from-file startup-script=startup-script.sh \
     --zone $ZONE \
