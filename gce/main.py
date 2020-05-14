@@ -19,21 +19,8 @@ from settings import  CLOUD_STORAGE_BUCKET, FLASK_SECRET
 from settings import UPLOAD_FOLDER, ROOT_DIR
 from werkzeug.utils import secure_filename
 
-# from google.cloud import logging
-# # Instantiates a client
-# logging_client = logging.Client()
-# # The name of the log to write to
-# log_name = 'hub-logger'
-# # Selects the log to write to
-# logger = logging_client.logger(log_name)
-# # The data to log
-# text = 'Searchable-text!'
-# # Writes the log entry
-# logger.log_text(text)
-# print('Logged: {}'.format(text))
-
-
-IS_APPENGINE = os.environ.get('IS_APPENGINE', True)
+# False writes to local storage.
+IS_APPENGINE = os.environ.get('IS_APPENGINE', False)
 ALLOWED_EXTENSIONS = set(['json', 'properties'])
 
 # Create a projects folder
@@ -89,23 +76,15 @@ app.secret_key = FLASK_SECRET
 # https://medium.com/@trstringer/logging-flask-and-gunicorn-the-manageable-way-2e6f0b8beb2f
 # only keep if I need that logging.
 
-
-app.debug = True
-
 # Configure logging
+app.debug = True
 if app.debug:
     logging.basicConfig(level=os.environ.get('LOG_LEVEL', 'INFO'))
     client = google.cloud.logging.Client()
     client.get_default_handler()
     client.setup_logging()
-    # Attaches a Google Stackdriver logging handler to the root logger
     log = logging.getLogger('Allure-Hub')
-    # log.addHandler(client)
-    log.info('Logging setup in 1....')
-
-log.info('2.... Logging setup')
-
-
+    log.info('Logging setup in SEARCHFORTHIS1')
 
 
 def allowed_file(filename):
@@ -133,6 +112,7 @@ def favicon():
 
 @app.route('/', methods=['GET'])
 def index():
+    log.info('Getting index SEARCHFORTHIS2')
     return render_template(
         'index.html',
         current_projects=get_projects(
