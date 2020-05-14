@@ -1,0 +1,20 @@
+<!doctype html>
+<title>Delete a Project</title>
+<h1>Delete a project folder</h1>
+<form method=post enctype=multipart/form-data>
+  Project: <input type="text" name="project"><br><br>
+  <input type=submit value=Delete>
+</form>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+<div class="return-home">
+  <a href="/qa_admin">Back</a>
+</div>

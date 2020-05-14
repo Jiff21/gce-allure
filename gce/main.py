@@ -24,11 +24,19 @@ ALLOWED_EXTENSIONS = set(['json', 'properties'])
 
 # Create a projects folder
 # REplace with UPLOAD_FOLDER?
+logging.info(UPLOAD_FOLDER)
 if os.path.isdir(os.path.join(
     os.path.abspath(os.path.dirname(__file__)),
     'projects'
 )) is False:
-    print('Creating Projects Folder', file=sys.stdout)
+    logging.debug(
+        'Creating Projects Folder at %s' % UPLOAD_FOLDER,
+        file=sys.stdout
+    )
+    print(
+        'Creating Projects Folder at %s' % UPLOAD_FOLDER,
+        file=sys.stdout
+    )
     os.makedirs(os.path.join(
         os.path.abspath(os.path.dirname(__file__)),
         'projects'

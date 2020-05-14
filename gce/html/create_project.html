@@ -1,0 +1,21 @@
+<!doctype html>
+<title>Create Project</title>
+<h1>Create a new project folder</h1>
+<p>The name used must be unique to all of Google Cloud Storage but will also be the display name so pick carefully.</p>
+<form method=post enctype=multipart/form-data>
+  Project: <input type="text" name="project"><br><br>
+  <input type=submit value=Create>
+</form>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+<div class="return-home">
+  <a href="/qa_admin">Back</a>
+</div>

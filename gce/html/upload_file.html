@@ -1,0 +1,23 @@
+<!doctype html>
+<title>Upload File</title>
+<h1>Upload JSON Allure Results File</h1>
+<div class="flash-messages">
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+    </ul>
+</div>
+<form method=post enctype=multipart/form-data>
+  <input type=file name=file><br><br>
+  Project: <input type="text" name="project"><br><br>
+  <input type=submit value=Upload>
+</form>
+<div class="return-home">
+  <a href="/qa_admin">Back</a>
+</div>

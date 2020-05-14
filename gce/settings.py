@@ -6,9 +6,10 @@ _ENV=os.getenv('_ENV', 'test')
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# Switch to use env name?
 UPLOAD_FOLDER = os.path.join(
     ROOT_DIR,
-    _ENV
+    'projects'
 )
 
 FLASK_SECRET = os.environ.get('FLASK_SECRET', 'fake-secret')

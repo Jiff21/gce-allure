@@ -1,0 +1,20 @@
+<!doctype html>
+<title>Build Report</title>
+<h1>Build a project report</h1>
+<form method=post enctype=multipart/form-data>
+  Project: <input type="text" name="project"><br><br>
+  <input type=submit value=Build>
+</form>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+<div class="return-home">
+  <a href="/qa_admin">Back</a>
+</div>

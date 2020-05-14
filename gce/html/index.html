@@ -1,0 +1,24 @@
+<!doctype html>
+<h1 id="hero-title">BYNDQA - SF - Test Reports</h1>
+<div class="flash-messages">
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <h5>Message</h5>
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+    </ul>
+</div>
+<div id="project-list">
+  <h2> Project List </h2>
+  <ul>
+  {%- for item in current_projects %}
+      <li><a href="projects/{{ item }}/report/index.html#">{{ item }}</a></li>
+  {%- endfor %}
+  </ul>
+</div>
+
