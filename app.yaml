@@ -1,0 +1,18 @@
+resources:
+- name: ubuntu-v1
+  type: compute.v1.instance
+  properties:
+    zone: us-west2-b
+    machineType: zones/us-west2-b/machineTypes/f1-micro
+    disks:
+    - deviceName: boot
+      type: PERSISTENT
+      boot: true
+      autoDelete: false
+      initializeParams:
+        sourceImage: projects/ubuntu-os-cloud/global/images/family/ubuntu-minimal-2004-lts
+    networkInterfaces:
+    - network: global/networks/default
+
+# Add IAP
+#https://cloud.google.com/deployment-manager/docs/configuration/set-access-control-resources#console
