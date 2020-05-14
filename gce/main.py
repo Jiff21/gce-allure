@@ -79,12 +79,12 @@ app.secret_key = FLASK_SECRET
 # Configure logging
 app.debug = True
 if app.debug:
-    logging.basicConfig(level=os.environ.get('LOG_LEVEL', 'INFO'))
     client = google.cloud.logging.Client()
     client.get_default_handler()
-    client.setup_logging()
-    log = logging.getLogger('Allure-Hub')
-    log.info('Logging setup in SEARCHFORTHIS1')
+    # client.setup_logging()
+    logging.basicConfig(handlers=[client], level=os.environ.get('LOG_LEVEL', 'INFO'))
+    # log = logging.getLogger('Allure-Hub')
+    logging.info('Logging setup in SEARCHFORTHIS1')
 
 
 def allowed_file(filename):
@@ -112,7 +112,7 @@ def favicon():
 
 @app.route('/', methods=['GET'])
 def index():
-    log.info('Getting index SEARCHFORTHIS2')
+    logging.info('Getting index SEARCHFORTHIS2')
     return render_template(
         'index.html',
         current_projects=get_projects(
