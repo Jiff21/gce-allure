@@ -80,11 +80,20 @@ app.secret_key = FLASK_SECRET
 # https://medium.com/@trstringer/logging-flask-and-gunicorn-the-manageable-way-2e6f0b8beb2f
 # only keep if I need that logging.
 
+app.debug = True
 
-if __name__ != '__main__':
-    gunicorn_logger = logging.getLogger('gunicorn.error')
-    app.logger.handlers = gunicorn_logger.handlers
-    app.logger.setLevel(gunicorn_logger.level)
+# Configure logging
+if app.debug:
+    logging.basicConfig(level=logging.INFO)
+    client = google.cloud.logging.Client()
+    # Attaches a Google Stackdriver logging handler to the root logger
+    client.setup_logging(logging.INFO)
+
+
+# if __name__ != '__main__':
+#     gunicorn_logger = logging.getLogger('gunicorn.info')
+#     app.logger.handlers = gunicorn_logger.handlers
+#     app.logger.setLevel(gunicorn_logger.level)
 
 
 def allowed_file(filename):
