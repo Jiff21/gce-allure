@@ -1,12 +1,16 @@
+# Allure Hub on gce
 
+## Setup
 
 ```
 cp secrets/example.env.example secrets/dev.env
 ```
 
-Edit variables
+Edit variables appropriately, then run deploy script to create compute engine
+instance and necessary firewall rules
 
 ```
+source secrets/dev.env
 cd gce
 bash deploy.sh
 ```
@@ -22,7 +26,7 @@ Fix Main.py
 Test app.yaml disk options
 Update project to use env name instead of a project folder
 
-
+#### Scrath Notes
 
 ```
 virtualenv -p python3 lib
