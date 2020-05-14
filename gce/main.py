@@ -79,7 +79,10 @@ app.secret_key = FLASK_SECRET
 # Configure logging
 app.debug = True
 if app.debug:
-    logging.basicConfig(level=os.environ.get('LOG_LEVEL', 'INFO'))
+    logging.basicConfig(
+        filename='/tmp/test-unstructured-log.log',
+        level=os.environ.get('LOG_LEVEL', 'INFO')
+    )
     client = google.cloud.logging.Client()
     client.get_default_handler()
     client.setup_logging()
