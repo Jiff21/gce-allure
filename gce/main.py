@@ -1,6 +1,6 @@
 import os
 import jinja2
-# import logging
+import logging
 import sys
 from flask import Flask, flash, request, redirect, url_for, render_template
 from flask import send_from_directory, session, send_file
@@ -14,23 +14,23 @@ from base.linux_file_functions import create_report, local_file_uploader
 from base.first_run import get_existing_buckets
 from google.cloud import error_reporting
 from google.cloud import storage
-import google.cloud
+import google.cloud.logging
 from settings import  CLOUD_STORAGE_BUCKET, FLASK_SECRET
 from settings import UPLOAD_FOLDER, ROOT_DIR
 from werkzeug.utils import secure_filename
 
-from google.cloud import logging
-# Instantiates a client
-logging_client = logging.Client()
-# The name of the log to write to
-log_name = 'hub-logger'
-# Selects the log to write to
-logger = logging_client.logger(log_name)
-# The data to log
-text = 'Searchable-text!'
-# Writes the log entry
-logger.log_text(text)
-print('Logged: {}'.format(text))
+# from google.cloud import logging
+# # Instantiates a client
+# logging_client = logging.Client()
+# # The name of the log to write to
+# log_name = 'hub-logger'
+# # Selects the log to write to
+# logger = logging_client.logger(log_name)
+# # The data to log
+# text = 'Searchable-text!'
+# # Writes the log entry
+# logger.log_text(text)
+# print('Logged: {}'.format(text))
 
 
 IS_APPENGINE = os.environ.get('IS_APPENGINE', True)
@@ -92,19 +92,26 @@ app.secret_key = FLASK_SECRET
 
 app.debug = True
 
-# # Configure logging
-# if app.debug:
-#     logging.basicConfig(level=logging.INFO)
-#     client = google.cloud.logging.Client()
-#     # Attaches a Google Stackdriver logging handler to the root logger
-#     client.setup_logging(logging.INFO)
-#     logger = logging.getLogger()
-#     logger.addHandler(client)
-#     logger.info('Logging setup')
-#
-# logger.info('Logging setup')
+# Configure logging
+if app.debug:
+    logging.basicConfig(level=os.environ.get('LOG_LEVEL', 'INFO'))
+    client = google.cloud.logging.Client()
+    client.get_default_handler()
+    client.setup_logging()
+    # Attaches a Google Stackdriver logging handler to the root logger
+    log = logging.getLogger('Allure-Hub')
+    # log.addHandler(client)
+    log.info('Logging setup in 1....')
+
+log.info('2.... Logging setup')
 
 
+# Retrieves a Cloud Logging handler based on the environment
+# you're running in and integrates the handler with the
+# Python logging module. By default this captures all logs
+# at INFO level and higher
+client.get_default_handler()
+client.setup_logging()
 
 
 def allowed_file(filename):
