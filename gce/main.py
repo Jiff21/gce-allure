@@ -91,7 +91,7 @@ app.secret_key = FLASK_SECRET
 client = google.cloud.logging.Client()
 client.get_default_handler()
 client.setup_logging()
-logging.basicConfig(level=os.environ.get('LOG_LEVEL', 'INFO'))
+# logging.basicConfig(level=os.environ.get('LOG_LEVEL', 'INFO'))
 # log = logging.getLogger('Allure-Hub')
 logging.info('Logging setup in SEARCHFORTHIS1')
 
