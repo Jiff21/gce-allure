@@ -77,23 +77,15 @@ app.secret_key = FLASK_SECRET
 # only keep if I need that logging.
 
 # # Configure logging
-# app.debug = True
-# if app.debug:
-#     client = google.cloud.logging.Client()
-#     client.get_default_handler()
-#     # client.setup_logging()
-#     logging.basicConfig(handlers=[client], level=os.environ.get('LOG_LEVEL', 'INFO'))
-#     # log = logging.getLogger('Allure-Hub')
-#     logging.info('Logging setup in SEARCHFORTHIS1')
+app.debug = True
+if app.debug:
+    logging.basicConfig(level=os.environ.get('LOG_LEVEL', 'INFO'))
+    client = google.cloud.logging.Client()
+    client.get_default_handler()
+    client.setup_logging()
+    log = logging.getLogger('Allure-Hub')
+    log.info('#####Logging setup in SEARCHFORTHISNEW1')
 
-# Configure logging
-
-client = google.cloud.logging.Client()
-client.get_default_handler()
-client.setup_logging()
-# logging.basicConfig(level=os.environ.get('LOG_LEVEL', 'INFO'))
-# log = logging.getLogger('Allure-Hub')
-logging.info('Logging setup in SEARCHFORTHIS1')
 
 
 def allowed_file(filename):
@@ -121,7 +113,7 @@ def favicon():
 
 @app.route('/', methods=['GET'])
 def index():
-    logging.info('Getting index SEARCHFORTHIS2')
+    log.info('#####Logging setup in SEARCHFORTHISNEW2')
     return render_template(
         'index.html',
         current_projects=get_projects(
@@ -132,6 +124,7 @@ def index():
 
 @app.route('/qa_admin', methods=['GET'])
 def qa_admin():
+    log.error('#####Logging setup in SEARCHFORTHISNEW3')
     return render_template(
         'qa_admin.html',
         current_projects=get_projects(
