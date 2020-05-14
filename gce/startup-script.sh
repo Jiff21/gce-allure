@@ -2,13 +2,16 @@
 curl -sSO https://dl.google.com/cloudagents/install-logging-agent.sh
 sudo bash install-logging-agent.sh
 
+
 # Install or update needed software
 apt-get update
-apt-get install -yq git supervisor python3-pip apt-transport-https software-properties-common
+apt-get install -yq git supervisor python3-pip apt-transport-https software-properties-common google-fluentd=1.6.35-1 google-fluentd-catch-all-config
 #pip install --upgrade pip virtualenv
+sudo service google-fluentd start
 pip3 --version
 pip3 install virtualenv
 
+echo $'export http_proxy="http://0.0.0.0:8080"\nexport https_proxy="http://0.0.0.0:8080"\nexport no_proxy=169.254.169.254  # Skip proxy for the local Metadata Server.' >  /etc/default/google-fluentd
 
 # Account to own server process
 useradd -m -d /home/pythonapp pythonapp
