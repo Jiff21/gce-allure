@@ -1,10 +1,9 @@
 import os
 import jinja2
-import logging
+# import logging
 import sys
 from flask import Flask, flash, request, redirect, url_for, render_template
 from flask import send_from_directory, session, send_file
-from google.cloud import storage
 from base.app_engine_functions import app_engine_file_uploader
 from base.app_engine_functions import delete_app_engine_bucket
 from base.app_engine_functions import copy_bucket_json_to_local_folders
@@ -13,11 +12,25 @@ from base.linux_file_functions import create_local_folder, delete_local_folder
 from base.linux_file_functions import delete_json_folder_content
 from base.linux_file_functions import create_report, local_file_uploader
 from base.first_run import get_existing_buckets
+from google.cloud import error_reporting
+from google.cloud import storage
+import google.cloud
 from settings import  CLOUD_STORAGE_BUCKET, FLASK_SECRET
 from settings import UPLOAD_FOLDER, ROOT_DIR
 from werkzeug.utils import secure_filename
-from google.cloud import error_reporting
 
+from google.cloud import logging
+# Instantiates a client
+logging_client = logging.Client()
+# The name of the log to write to
+log_name = 'hub-logger'
+# Selects the log to write to
+logger = logging_client.logger(log_name)
+# The data to log
+text = 'Searchable-text!'
+# Writes the log entry
+logger.log_text(text)
+print('Logged: {}'.format(text))
 
 
 IS_APPENGINE = os.environ.get('IS_APPENGINE', True)
@@ -79,22 +92,19 @@ app.secret_key = FLASK_SECRET
 
 app.debug = True
 
-# Configure logging
-if app.debug:
-    logging.basicConfig(level=logging.INFO)
-    client = google.cloud.logging.Client()
-    # Attaches a Google Stackdriver logging handler to the root logger
-    client.setup_logging(logging.INFO)
-    logger = logging.getLogger()
-    logger.addHandler(client)
-    logger.info('Logging setup')
+# # Configure logging
+# if app.debug:
+#     logging.basicConfig(level=logging.INFO)
+#     client = google.cloud.logging.Client()
+#     # Attaches a Google Stackdriver logging handler to the root logger
+#     client.setup_logging(logging.INFO)
+#     logger = logging.getLogger()
+#     logger.addHandler(client)
+#     logger.info('Logging setup')
+#
+# logger.info('Logging setup')
 
-logger.info('Logging setup')
 
-# if __name__ != '__main__':
-#     gunicorn_logger = logging.getLogger('gunicorn.info')
-#     app.logger.handlers = gunicorn_logger.handlers
-#     app.logger.setLevel(gunicorn_logger.level)
 
 
 def allowed_file(filename):

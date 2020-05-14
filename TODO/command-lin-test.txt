@@ -1,0 +1,30 @@
+gcloud beta compute --project=sf-qa-reports instances create instance-1 --zone=us-west2-b \
+  --machine-type=f1-micro \
+  --subnet=default \
+  --network-tier=PREMIUM \
+  --metadata=startup-script=\#/bin/sh$'\n'apt-get\ update\ \&\&\ apt-get\ install\ -y\ \\$'\n'\ \ apt-transport-https\ \\$'\n'\ \ software-properties-common$'\n'apt-get\ update\ \&\&\ apt-get\ install\ -y\ \&\&\ rm\ -rf\ /var/lib/apt/lists/\*$'\n'apt-add-repository\ ppa:qameta/allure$'\n'add-apt-repository\ ppa:webupd8team/java$'\n'echo\ debconf\ shared/accepted-oracle-license-v1-1\ select\ true\ \|\ debconf-set-selections$'\n'echo\ debconf\ shared/accepted-oracle-license-v1-1\ seen\ true\ \|\ debconf-set-selections$'\n'apt-get\ install\ -y\ allure \
+  --no-restart-on-failure \
+  --maintenance-policy=TERMINATE \
+  --preemptible \
+  --service-account=782865950902-compute@developer.gserviceaccount.com \
+  --scopes=https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/trace.append \
+  --image=ubuntu-1604-xenial-v20200429 \
+  --image-project=ubuntu-os-cloud \
+  --boot-disk-size=10GB \
+  --no-boot-disk-auto-delete \
+  --boot-disk-type=pd-standard \
+  --boot-disk-device-name=instance-1 \
+  --no-shielded-secure-boot \
+  --shielded-vtpm \
+  --shielded-integrity-monitoring \
+  --reservation-affinity=any
+
+
+--boot-disk-size=10GB \
+--no-boot-disk-auto-delete \
+--boot-disk-type=pd-standard \
+--boot-disk-device-name=instance-1 \
+--no-shielded-secure-boot \
+--shielded-vtpm \
+--shielded-integrity-monitoring \
+--reservation-affinity=any
