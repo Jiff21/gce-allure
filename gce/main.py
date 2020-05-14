@@ -16,6 +16,7 @@ from base.first_run import get_existing_buckets
 from settings import  CLOUD_STORAGE_BUCKET, FLASK_SECRET
 from settings import UPLOAD_FOLDER, ROOT_DIR
 from werkzeug.utils import secure_filename
+from google.cloud import error_reporting
 
 
 
@@ -24,15 +25,10 @@ ALLOWED_EXTENSIONS = set(['json', 'properties'])
 
 # Create a projects folder
 # REplace with UPLOAD_FOLDER?
-logging.info(UPLOAD_FOLDER)
 if os.path.isdir(os.path.join(
     os.path.abspath(os.path.dirname(__file__)),
     'projects'
 )) is False:
-    logging.debug(
-        'Creating Projects Folder at %s' % UPLOAD_FOLDER,
-        file=sys.stdout
-    )
     print(
         'Creating Projects Folder at %s' % UPLOAD_FOLDER,
         file=sys.stdout
@@ -80,6 +76,7 @@ app.secret_key = FLASK_SECRET
 # https://medium.com/@trstringer/logging-flask-and-gunicorn-the-manageable-way-2e6f0b8beb2f
 # only keep if I need that logging.
 
+
 app.debug = True
 
 # Configure logging
@@ -88,7 +85,11 @@ if app.debug:
     client = google.cloud.logging.Client()
     # Attaches a Google Stackdriver logging handler to the root logger
     client.setup_logging(logging.INFO)
+    logger = logging.getLogger()
+    logger.addHandler(client)
+    logger.info('Logging setup')
 
+logger.info('Logging setup')
 
 # if __name__ != '__main__':
 #     gunicorn_logger = logging.getLogger('gunicorn.info')
@@ -284,13 +285,31 @@ def build_report():
     return render_template('build_report.html')
 
 
+@app.route('/errors')
+def errors():
+    raise Exception('This is an intentional exception.')
+
+
+# Add an error handler that reports exceptions to Stackdriver Error
+# Reporting. Note that this error handler is only used when debug
+# is False
 @app.errorhandler(500)
 def server_error(e):
-    logging.exception('An error occurred during a request.')
+    client = error_reporting.Client()
+    client.report_exception(
+        http_context=error_reporting.build_flask_context(request))
     return """
     An internal error occurred: <pre>{}</pre>
     See logs for full stacktrace.
     """.format(e), 500
+
+# @app.errorhandler(500)
+# def server_error(e):
+#     logging.exception('An error occurred during a request.')
+#     return """
+#     An internal error occurred: <pre>{}</pre>
+#     See logs for full stacktrace.
+#     """.format(e), 500
 
 
 if __name__ == '__main__':
