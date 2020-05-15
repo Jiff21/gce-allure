@@ -49,14 +49,16 @@ git clone https://github.com/Jiff21/gce-allure.git /home/pythonapp/app
 cd /home/pythonapp/app
 git checkout -b feature/log-path origin/feature/log-path
 
+# Set ownership to newly created account
+chown -R pythonapp:pythonapp /home/pythonapp/app
+
 # Python environment setup
 virtualenv -p python3 /home/pythonapp/app/gce/env
 source /home/pythonapp/app/gce/env/bin/activate
-/opt/app/gce/env/bin/pip install -r /home/pythonapp/app/gce/requirements.txt
+# /home/pythonapp/app/gce/env/bin/pip install -r /home/pythonapp/app/gce/requirements.txt
 pip3 install -r /home/pythonapp/app/gce/requirements.txt
 
-# Set ownership to newly created account
-chown -R pythonapp:pythonapp /home/pythonapp/app
+
 # sudo chown -R jeff:jeff /home/pythonapp/app
 
 # Put supervisor configuration in proper place
