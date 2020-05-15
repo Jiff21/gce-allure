@@ -29,7 +29,7 @@ if os.path.isdir(os.path.join(
     os.path.abspath(os.path.dirname(__file__)),
     'projects'
 )) is False:
-    print(
+    log.info(
         'Creating Projects Folder at %s' % UPLOAD_FOLDER,
         file=sys.stdout
     )
@@ -72,17 +72,10 @@ app.jinja_loader = jinja2.FileSystemLoader(os.path.join(
 
 
 app.secret_key = FLASK_SECRET
-# Suggested for logging from
-# https://medium.com/@trstringer/logging-flask-and-gunicorn-the-manageable-way-2e6f0b8beb2f
-# only keep if I need that logging.
-app.debug = False
-app.testing = True
 
+app.testing = True
 # Configure logging
 if app.testing:
-# Configure logging
-# app.debug = True
-# if app.debug:
     log_format = '[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s'
     logging.basicConfig(
         format=log_format,
@@ -94,9 +87,7 @@ if app.testing:
     client.setup_logging()
     log = logging.getLogger('Allure-Hub')
     log.info('Logging setup in SEARCHFORTHIS1')
-    log.warning('Logging setup in SEARCHFORTHIS1')
-    log.error('Logging setup in SEARCHFORTHIS1')
-    log.debug('Logging setup in SEARCHFORTHIS1')
+
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -145,6 +136,7 @@ def qa_admin():
 @app.route('/upload_file', methods=['GET', 'POST'])
 def upload_file():
     # Add this to save path, and add return directory as well.
+    log.info('Upload File')
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
@@ -270,7 +262,7 @@ def build_report():
                 # Need to add app engine Logic
                 if IS_APPENGINE == 'True':
                     # Delete pre-existing folder content
-                    print('Deleting old files at %s' %
+                    log.info('Deleting old files at %s' %
                           str(os.path.join(folder_path, 'json')),
                           file=sys.stdout
                           )
@@ -316,3 +308,9 @@ def server_error(e):
 
 if __name__ == '__main__':
     app.run()
+    # Suggested for logging from
+    # https://medium.com/@trstringer/logging-flask-and-gunicorn-the-manageable-way-2e6f0b8beb2f
+    # only keep if I need that logging.
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(gunicorn_logger.level)

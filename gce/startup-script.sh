@@ -26,6 +26,13 @@ sudo tee /etc/google-fluentd/config.d/test-unstructured-log.conf <<EOF
 EOF
 sudo service google-fluentd reload
 
+# Install Allure
+sudo apt-add-repository ppa:qameta/allure
+sudo add-apt-repository ppa:webupd8team/java
+echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
+echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections
+sudo apt-get update && apt-get install -y allure
+
 # Account to own server process
 useradd -m -d /home/pythonapp pythonapp
 
