@@ -75,11 +75,17 @@ app.secret_key = FLASK_SECRET
 # Suggested for logging from
 # https://medium.com/@trstringer/logging-flask-and-gunicorn-the-manageable-way-2e6f0b8beb2f
 # only keep if I need that logging.
+app.debug = False
+app.testing = True
 
 # Configure logging
-app.debug = True
-if app.debug:
+if app.testing:
+# Configure logging
+# app.debug = True
+# if app.debug:
+    log_format = '[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s'
     logging.basicConfig(
+        format=log_format,
         filename='/tmp/test-unstructured-log.log',
         level=os.environ.get('LOG_LEVEL', 'INFO')
     )
@@ -88,7 +94,9 @@ if app.debug:
     client.setup_logging()
     log = logging.getLogger('Allure-Hub')
     log.info('Logging setup in SEARCHFORTHIS1')
-
+    log.warning('Logging setup in SEARCHFORTHIS1')
+    log.error('Logging setup in SEARCHFORTHIS1')
+    log.debug('Logging setup in SEARCHFORTHIS1')
 
 def allowed_file(filename):
     return '.' in filename and \
