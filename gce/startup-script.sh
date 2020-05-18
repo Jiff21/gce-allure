@@ -47,7 +47,7 @@ cd /home/pythonapp
 #git clone https://github.com/GoogleCloudPlatform/getting-started-python.git /opt/app
 git clone https://github.com/Jiff21/gce-allure.git /home/pythonapp/app
 cd /home/pythonapp/app
-git checkout -b feature/log-path origin/feature/log-path
+git checkout -b feature/tild-path origin/feature/tild-path
 
 # Set ownership to newly created account
 chown -R pythonapp:pythonapp /home/pythonapp/app
