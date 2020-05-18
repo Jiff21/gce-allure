@@ -88,16 +88,16 @@ def create_report(folder_name):
         'history'
     )
     if os.path.isdir(report_history_path):
+        log.info('Copying History to Results File.', file=sys.stdout)
         print('Copying History to Results File.', file=sys.stdout)
         # cp - R report_history_path results_history
         generated_command = 'cp -R %s %s' % (
             report_history_path,
             results_history
             )
-        print('Copying History to Results File. With Command:\n%s'
-              % generated_command,
-              file=sys.stdout
-              )
+        log.info('Copying History to Results File. With Command:\n%s'
+              % generated_command
+        )
         process = subprocess.Popen(
             generated_command,
             stderr=subprocess.STDOUT,
@@ -105,7 +105,7 @@ def create_report(folder_name):
             )
         process.wait()
     else:
-        print('No history to copy', file=sys.stdout)
+        log.info('No history to copy')
     # Create Report from current json and history
     results_path = os.path.join(
         UPLOAD_FOLDER,
@@ -121,12 +121,18 @@ def create_report(folder_name):
                 results_path,
                 report_path
     )
-    process = subprocess.Popen(
-        generated_command,
-        stderr=subprocess.STDOUT,
-        shell=True
+    log.info('Time to create a report with command:\n%s'
+          % generated_command
     )
-    process.wait()
+    try:
+        process = subprocess.Popen(
+            generated_command,
+            stderr=subprocess.STDOUT,
+            shell=True
+        )
+        process.wait()
+    except Exception:
+        log.error("Fatal error in main loop", exc_info=True)
     flash('Report Created at ' + os.path.join(
         request.host,
         'projects',
@@ -145,9 +151,9 @@ def write_files_locally(project_name, filename, file):
              created and you have typed correct name.'''
         )
         return render_template('upload_file.html')
-    print('Adding files to %s' %
-          os.path.join(UPLOAD_FOLDER, sub_path),
-          file=sys.stdout)
+    log.info('Adding files to %s' %
+          os.path.join(UPLOAD_FOLDER, sub_path)
+    )
     file.save(os.path.join(UPLOAD_FOLDER, sub_path))
     flash('File created at: ' + os.path.join(
         request.host,
