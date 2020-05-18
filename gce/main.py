@@ -23,6 +23,19 @@ from werkzeug.utils import secure_filename
 IS_APPENGINE = os.environ.get('IS_APPENGINE', False)
 ALLOWED_EXTENSIONS = set(['json', 'properties'])
 
+
+log_format = '[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s'
+logging.basicConfig(
+    format=log_format,
+    filename='/tmp/test-unstructured-log.log',
+    level=os.environ.get('LOG_LEVEL', 'INFO')
+)
+client = google.cloud.logging.Client()
+client.get_default_handler()
+client.setup_logging()
+log = logging.getLogger('Allure-Hub')
+log.info('Logging setup in SEARCHFORTHIS1')
+
 # Create a projects folder
 # REplace with UPLOAD_FOLDER?
 if os.path.isdir(os.path.join(
@@ -73,20 +86,20 @@ app.jinja_loader = jinja2.FileSystemLoader(os.path.join(
 
 app.secret_key = FLASK_SECRET
 
-app.testing = True
-# Configure logging
-if app.testing:
-    log_format = '[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s'
-    logging.basicConfig(
-        format=log_format,
-        filename='/tmp/test-unstructured-log.log',
-        level=os.environ.get('LOG_LEVEL', 'INFO')
-    )
-    client = google.cloud.logging.Client()
-    client.get_default_handler()
-    client.setup_logging()
-    log = logging.getLogger('Allure-Hub')
-    log.info('Logging setup in SEARCHFORTHIS1')
+# app.testing = True
+# # Configure logging
+# if app.testing:
+#     log_format = '[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s'
+#     logging.basicConfig(
+#         format=log_format,
+#         filename='/tmp/test-unstructured-log.log',
+#         level=os.environ.get('LOG_LEVEL', 'INFO')
+#     )
+#     client = google.cloud.logging.Client()
+#     client.get_default_handler()
+#     client.setup_logging()
+#     log = logging.getLogger('Allure-Hub')
+#     log.info('Logging setup in SEARCHFORTHIS1')
 
 
 def allowed_file(filename):
