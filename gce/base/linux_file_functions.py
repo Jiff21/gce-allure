@@ -1,11 +1,11 @@
 import os
+import logging
 import shutil
 import subprocess
 import sys
 from flask import flash, request, redirect, render_template
 from settings import UPLOAD_FOLDER, ROOT_DIR
-# from settings import log
-import logging
+
 log = logging.getLogger('Linux-File-Function')
 log.info('Logging setup in Linux-File-Function')
 

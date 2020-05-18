@@ -14,15 +14,18 @@ from base.linux_file_functions import create_report, local_file_uploader
 from base.first_run import get_existing_buckets
 from google.cloud import error_reporting
 from google.cloud import storage
-import google.cloud.logging
 from settings import  CLOUD_STORAGE_BUCKET, FLASK_SECRET
 from settings import UPLOAD_FOLDER, ROOT_DIR, _ENV
-from settings import log
 from werkzeug.utils import secure_filename
+
 
 # False writes to local storage.
 IS_APPENGINE = os.environ.get('IS_APPENGINE', False)
 ALLOWED_EXTENSIONS = set(['json', 'properties'])
+
+
+log = logging.getLogger('Allure-Hub')
+log.info('Logging setup in SEARCHFORTHIS1')
 
 
 # Create a projects folder
