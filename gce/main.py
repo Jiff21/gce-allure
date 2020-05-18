@@ -16,7 +16,7 @@ from google.cloud import error_reporting
 from google.cloud import storage
 import google.cloud.logging
 from settings import  CLOUD_STORAGE_BUCKET, FLASK_SECRET
-from settings import UPLOAD_FOLDER, ROOT_DIR
+from settings import UPLOAD_FOLDER, ROOT_DIR, _ENV
 from settings import log
 from werkzeug.utils import secure_filename
 
@@ -66,6 +66,7 @@ def get_projects(path):
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+app.config['PROPAGATE_EXCEPTIONS'] = True
 app.jinja_loader = jinja2.FileSystemLoader(os.path.join(
     os.path.abspath(os.path.dirname(__file__)),
     'html'
@@ -74,7 +75,9 @@ app.jinja_loader = jinja2.FileSystemLoader(os.path.join(
 
 app.secret_key = FLASK_SECRET
 
-# app.testing = True
+if 'prod' not in _ENV:
+    app.testing = True
+
 # # Configure logging
 # if app.testing:
 #     log_format = '[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s'
