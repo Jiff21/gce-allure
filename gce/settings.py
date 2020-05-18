@@ -14,3 +14,16 @@ UPLOAD_FOLDER = os.path.join(
 
 FLASK_SECRET = os.environ.get('FLASK_SECRET', 'fake-secret')
 CLOUD_STORAGE_BUCKET = os.environ.get('CLOUD_STORAGE_BUCKET', 'fake-bucket-name')
+
+
+log_format = '[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s'
+logging.basicConfig(
+    format=log_format,
+    filename='/tmp/test-unstructured-log.log',
+    level=os.environ.get('LOG_LEVEL', 'INFO')
+)
+client = google.cloud.logging.Client()
+client.get_default_handler()
+client.setup_logging()
+log = logging.getLogger('Allure-Hub')
+log.info('Logging setup in SEARCHFORTHIS1')

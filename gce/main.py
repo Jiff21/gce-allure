@@ -17,24 +17,13 @@ from google.cloud import storage
 import google.cloud.logging
 from settings import  CLOUD_STORAGE_BUCKET, FLASK_SECRET
 from settings import UPLOAD_FOLDER, ROOT_DIR
+from settings import log
 from werkzeug.utils import secure_filename
 
 # False writes to local storage.
 IS_APPENGINE = os.environ.get('IS_APPENGINE', False)
 ALLOWED_EXTENSIONS = set(['json', 'properties'])
 
-
-log_format = '[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s'
-logging.basicConfig(
-    format=log_format,
-    filename='/tmp/test-unstructured-log.log',
-    level=os.environ.get('LOG_LEVEL', 'INFO')
-)
-client = google.cloud.logging.Client()
-client.get_default_handler()
-client.setup_logging()
-log = logging.getLogger('Allure-Hub')
-log.info('Logging setup in SEARCHFORTHIS1')
 
 # Create a projects folder
 # REplace with UPLOAD_FOLDER?
@@ -43,8 +32,7 @@ if os.path.isdir(os.path.join(
     'projects'
 )) is False:
     log.info(
-        'Creating Projects Folder at %s' % UPLOAD_FOLDER,
-        file=sys.stdout
+        'Creating Projects Folder at %s' % UPLOAD_FOLDER
     )
     os.makedirs(os.path.join(
         os.path.abspath(os.path.dirname(__file__)),
@@ -276,8 +264,7 @@ def build_report():
                 if IS_APPENGINE == 'True':
                     # Delete pre-existing folder content
                     log.info('Deleting old files at %s' %
-                          str(os.path.join(folder_path, 'json')),
-                          file=sys.stdout
+                          str(os.path.join(folder_path, 'json'))
                           )
                     delete_json_folder_content(
                         os.path.join(folder_path, 'json')
