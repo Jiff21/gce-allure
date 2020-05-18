@@ -88,7 +88,7 @@ def create_report(folder_name):
         'history'
     )
     if os.path.isdir(report_history_path):
-        log.info('Copying History to Results File.', file=sys.stdout)
+        log.info('Copying History to Results File.')
         print('Copying History to Results File.', file=sys.stdout)
         # cp - R report_history_path results_history
         generated_command = 'cp -R %s %s' % (
@@ -131,13 +131,15 @@ def create_report(folder_name):
             shell=True
         )
         process.wait()
+        log.debug(str(process.stderr))
+        flash('Report Created at ' + os.path.join(
+            request.host,
+            'projects',
+            folder_name
+        ) + '/report/index.html')
     except Exception:
         log.error("Fatal error in main loop", exc_info=True)
-    flash('Report Created at ' + os.path.join(
-        request.host,
-        'projects',
-        folder_name
-    ) + '/report/index.html')
+        flash('Error occurred %s ' %  str(process.stderr))
 
 
 def write_files_locally(project_name, filename, file):
