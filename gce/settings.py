@@ -1,5 +1,6 @@
 import os
 import logging
+import google.cloud.logging
 
 
 PROJECT_ID=os.getenv('PROJECT_ID', 'sf-qa-reports')
