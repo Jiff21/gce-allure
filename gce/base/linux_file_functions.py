@@ -4,7 +4,10 @@ import subprocess
 import sys
 from flask import flash, request, redirect, render_template
 from settings import UPLOAD_FOLDER, ROOT_DIR
-from settings import log
+# from settings import log
+import logging
+log = logging.getLogger('Linux-File-Function')
+log.info('Logging setup in Linux-File-Function')
 
 def create_local_folder(folder_name, folder_path):
     '''Create project folders and message where it can be found.
@@ -138,7 +141,7 @@ def create_report(folder_name):
             folder_name
         ) + '/report/index.html')
     except Exception:
-        log.error("Fatal error in main loop", exc_info=True)
+        logging.exception('An exception occurred'.format(process.stderr))
         flash('Error occurred %s ' %  str(process.stderr))
 
 
