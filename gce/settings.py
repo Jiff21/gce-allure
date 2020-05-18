@@ -1,4 +1,6 @@
 import os
+import logging
+
 
 PROJECT_ID=os.getenv('PROJECT_ID', 'sf-qa-reports')
 ZONE=os.getenv('ZONE', 'us-west2-b')

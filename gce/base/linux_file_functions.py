@@ -4,7 +4,7 @@ import subprocess
 import sys
 from flask import flash, request, redirect, render_template
 from settings import UPLOAD_FOLDER, ROOT_DIR
-
+from settings import log
 
 def create_local_folder(folder_name, folder_path):
     '''Create project folders and message where it can be found.
@@ -60,10 +60,9 @@ def local_file_uploader(project_name, filename, file):
              created and you have typed correct name.'''
         )
         return render_template('upload_file.html')
-    print('Adding files to %s' % os.path.join(
+    log.debug('Adding files to %s' % os.path.join(
         UPLOAD_FOLDER,
-        sub_path),
-        file=sys.stderr
+        sub_path)
     )
     file.save(os.path.join(UPLOAD_FOLDER, sub_path))
     flash('File created at: ' + os.path.join(
