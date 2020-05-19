@@ -5,6 +5,7 @@ import subprocess
 import sys
 from flask import flash, request, redirect, render_template
 from settings import UPLOAD_FOLDER, ROOT_DIR
+from subprocess import check_output
 
 log = logging.getLogger('Linux-File-Function')
 log.info('Logging setup in Linux-File-Function')
@@ -120,7 +121,7 @@ def create_report(folder_name):
         folder_name,
         'report'
     )
-    generated_command = 'allure generate %s -o %s --clean' % (
+    generated_command = 'sudo allure generate %s -o %s --clean' % (
                 results_path,
                 report_path
     )
@@ -128,20 +129,30 @@ def create_report(folder_name):
           % generated_command
     )
     try:
-        process = subprocess.Popen(
-            generated_command,
-            stderr=subprocess.STDOUT,
-            shell=True
-        )
+        # process = subprocess.Popen(
+        #     generated_command,
+        #     stderr=subprocess.STDOUT,
+        #     shell=True
+        # )
+        # process.wait()
+        # Think I can't use check output as failing stops the program.
+        # process = check_output(
+        #     generated_command,
+        #     stderr=subprocess.STDOUT,
+        #     shell=True
+        # )
+        process = subprocess.Popen(generated_command, stdout=subprocess.PIPE, stderr=None, shell=True)
         process.wait()
-        log.debug(str(process.stderr))
+        output, error = process.communicate()
+        log.info('after process wait')
+        log.info(str(output))
         flash('Report Created at ' + os.path.join(
             request.host,
             'projects',
             folder_name
         ) + '/report/index.html')
     except Exception:
-        logging.exception('An exception occurred'.format(process.stderr))
+        log.exception('An exception occurred'.format(process.stderr))
         flash('Error occurred %s ' %  str(process.stderr))
 
 
