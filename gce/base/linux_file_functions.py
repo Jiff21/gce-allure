@@ -5,7 +5,8 @@ import subprocess
 import sys
 from flask import flash, request, redirect, render_template
 from settings import UPLOAD_FOLDER, ROOT_DIR
-from subprocess import check_output
+from subprocess import PIPE
+
 
 log = logging.getLogger('Linux-File-Function')
 log.info('Logging setup in Linux-File-Function')
@@ -122,40 +123,56 @@ def create_report(folder_name):
         'report'
     )
     import getpass
-    log.info(getpass.getuser())
-    generated_command = 'allure generate %s -o %s --clean' % (
+    log.info('Python running as: %s' % getpass.getuser())
+    generated_command = 'allures generate %s -o %s --clean' % (
                 results_path,
                 report_path
     )
     log.info('Time to create a report with command:\n%s'
           % generated_command
     )
-    try:
-        # process = subprocess.Popen(
-        #     generated_command,
-        #     stderr=subprocess.STDOUT,
-        #     shell=True
-        # )
-        # process.wait()
-        # Think I can't use check output as failing stops the program.
-        # process = check_output(
-        #     generated_command,
-        #     stderr=subprocess.STDOUT,
-        #     shell=True
-        # )
-        process = subprocess.Popen(generated_command, stdout=subprocess.PIPE, stderr=None, shell=True)
-        process.wait()
-        output, error = process.communicate()
-        log.info('after process wait')
-        log.info(str(output))
+    # try:
+    # process = subprocess.Popen(
+    #     generated_command,
+    #     stderr=subprocess.STDOUT,
+    #     shell=True
+    # )
+    # process.wait()
+    # Work for Success!
+    # from subprocess import PIPE
+    # process = subprocess.Popen(
+    #     generated_command,
+    #     stdout=PIPE,
+    #     shell=True
+    # )
+    # try:
+    #     outs, errs = process.communicate(timeout=15)
+    #     log.info('sucess: %s - %s ' % (outs, errs))
+    # except TimeoutExpired:
+    #     process.kill()
+    #     outs, errs = process.communicate()
+    #     log.info('failure: %s - %s ' % (outs, errs))
+    process = subprocess.Popen(
+        generated_command,
+        stdout=PIPE,
+        stderr=PIPE,
+        universal_newlines=True,
+        shell=True
+    )
+    outs, errs = process.communicate(timeout=120)
+    if errs == None:
+        log.info('sucess: %s' % outs)
         flash('Report Created at ' + os.path.join(
             request.host,
             'projects',
             folder_name
         ) + '/report/index.html')
-    except Exception:
-        log.exception('An exception occurred'.format(process.stderr))
-        flash('Error occurred %s ' %  str(process.stderr))
+    else:
+        log.info('Generate Report Errored: %s ' % errs)
+        log.exception('An exception occurred: %s'.format(errs))
+        log.critical('An exception occurred: %s'.format(errs))
+        flash('Error occurred %s ' %  errs)
+
 
 
 def write_files_locally(project_name, filename, file):
