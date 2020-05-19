@@ -1,26 +1,10 @@
-# sudo tee /etc/google-fluentd/config.d/test-unstructured-log.conf <<EOF
-# <source>
-#     @type tail
-#     # Format 'none' indicates the log is unstructured (text).
-#     format none
-#     # The path of the log file.
-#     path /tmp/test-unstructured-log.log
-#     # The path of the position file that records where in the log file
-#     # we have processed already. This is useful when the agent
-#     # restarts.
-#     pos_file /var/lib/google-fluentd/pos/test-unstructured-log.pos
-#     read_from_head true
-#     # The log tag for this log input.
-#     tag unstructured-log
-# </source>
-# EOF
 sudo tee /etc/google-fluentd/config.d/test-unstructured-log.conf <<EOF
 <source>
     @type tail
     # Format 'none' indicates the log is unstructured (text).
     format none
     # The path of the log file.
-    path /tmp/gunicorn.error.log
+    path /tmp/gunicorn.error.log, /tmp/test-unstructured-log.log
     # The path of the position file that records where in the log file
     # we have processed already. This is useful when the agent
     # restarts.
@@ -58,21 +42,33 @@ echo "Allure version is $(allure --version)"
 useradd -m -d /home/pythonapp pythonapp
 
 # Fetch source code
-export HOME=/root
+export HOME=/home/pythonapp
+cd /home/pythonapp
 #git clone https://github.com/GoogleCloudPlatform/getting-started-python.git /opt/app
-git clone https://github.com/Jiff21/gce-allure.git /opt/app
-git checkout -b feature/log-path origin/feature/log-path
-
-# Python environment setup
-virtualenv -p python3 /opt/app/gce/env
-source /opt/app/gce/env/bin/activate
-/opt/app/gce/env/bin/pip install -r /opt/app/gce/requirements.txt
+git clone https://github.com/Jiff21/gce-allure.git /home/pythonapp/app
+cd /home/pythonapp/app
+git checkout -b feature/tild-path origin/feature/tild-path
 
 # Set ownership to newly created account
-chown -R pythonapp:pythonapp /opt/app
+chown -R pythonapp:pythonapp /home/pythonapp/app/
+# sudo chmod +x /home/pythonapp/app/
+# sudo chmod g+s /home/pythonapp/app/
+# sudo apt-get install acl
+# sudo setfacl -Rm g:pythonapp:rwX /home/pythonapp/app/
+# sudo setfacl -d -Rm g:pythonapp:rwX /home/pythonapp/app/
+
+# sudo chown -R jeff:jeff /home/pythonapp/app
+
+# Python environment setup
+virtualenv -p python3 /home/pythonapp/app/gce/env
+source /home/pythonapp/app/gce/env/bin/activate
+# /home/pythonapp/app/gce/env/bin/pip install -r /home/pythonapp/app/gce/requirements.txt
+pip3 install -r /home/pythonapp/app/gce/requirements.txt
+
+
 
 # Put supervisor configuration in proper place
-cp /opt/app/gce/python-app.conf /etc/supervisor/conf.d/python-app.conf
+cp /home/pythonapp/app/gce/python-app.conf /etc/supervisor/conf.d/python-app.conf
 
 # Start service via supervisorctl
 supervisorctl reread

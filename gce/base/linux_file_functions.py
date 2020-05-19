@@ -1,10 +1,13 @@
 import os
+import logging
 import shutil
 import subprocess
 import sys
 from flask import flash, request, redirect, render_template
 from settings import UPLOAD_FOLDER, ROOT_DIR
 
+log = logging.getLogger('Linux-File-Function')
+log.info('Logging setup in Linux-File-Function')
 
 def create_local_folder(folder_name, folder_path):
     '''Create project folders and message where it can be found.
@@ -60,10 +63,9 @@ def local_file_uploader(project_name, filename, file):
              created and you have typed correct name.'''
         )
         return render_template('upload_file.html')
-    print('Adding files to %s' % os.path.join(
+    log.debug('Adding files to %s' % os.path.join(
         UPLOAD_FOLDER,
-        sub_path),
-        file=sys.stderr
+        sub_path)
     )
     file.save(os.path.join(UPLOAD_FOLDER, sub_path))
     flash('File created at: ' + os.path.join(
@@ -89,16 +91,16 @@ def create_report(folder_name):
         'history'
     )
     if os.path.isdir(report_history_path):
+        log.info('Copying History to Results File.')
         print('Copying History to Results File.', file=sys.stdout)
         # cp - R report_history_path results_history
         generated_command = 'cp -R %s %s' % (
             report_history_path,
             results_history
             )
-        print('Copying History to Results File. With Command:\n%s'
-              % generated_command,
-              file=sys.stdout
-              )
+        log.info('Copying History to Results File. With Command:\n%s'
+              % generated_command
+        )
         process = subprocess.Popen(
             generated_command,
             stderr=subprocess.STDOUT,
@@ -106,7 +108,7 @@ def create_report(folder_name):
             )
         process.wait()
     else:
-        print('No history to copy', file=sys.stdout)
+        log.info('No history to copy')
     # Create Report from current json and history
     results_path = os.path.join(
         UPLOAD_FOLDER,
@@ -122,17 +124,25 @@ def create_report(folder_name):
                 results_path,
                 report_path
     )
-    process = subprocess.Popen(
-        generated_command,
-        stderr=subprocess.STDOUT,
-        shell=True
+    log.info('Time to create a report with command:\n%s'
+          % generated_command
     )
-    process.wait()
-    flash('Report Created at ' + os.path.join(
-        request.host,
-        'projects',
-        folder_name
-    ) + '/report/index.html')
+    try:
+        process = subprocess.Popen(
+            generated_command,
+            stderr=subprocess.STDOUT,
+            shell=True
+        )
+        process.wait()
+        log.debug(str(process.stderr))
+        flash('Report Created at ' + os.path.join(
+            request.host,
+            'projects',
+            folder_name
+        ) + '/report/index.html')
+    except Exception:
+        logging.exception('An exception occurred'.format(process.stderr))
+        flash('Error occurred %s ' %  str(process.stderr))
 
 
 def write_files_locally(project_name, filename, file):
@@ -146,9 +156,9 @@ def write_files_locally(project_name, filename, file):
              created and you have typed correct name.'''
         )
         return render_template('upload_file.html')
-    print('Adding files to %s' %
-          os.path.join(UPLOAD_FOLDER, sub_path),
-          file=sys.stdout)
+    log.info('Adding files to %s' %
+          os.path.join(UPLOAD_FOLDER, sub_path)
+    )
     file.save(os.path.join(UPLOAD_FOLDER, sub_path))
     flash('File created at: ' + os.path.join(
         request.host,
