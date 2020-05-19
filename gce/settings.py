@@ -26,6 +26,6 @@ logging.basicConfig(
     filename='/tmp/test-unstructured-log.log',
     level=os.environ.get('LOG_LEVEL', 'INFO')
 )
-# client = google.cloud.logging.Client()
-# client.get_default_handler()
-# client.setup_logging()
+client = google.cloud.logging.Client()
+client.get_default_handler()
+client.setup_logging()
