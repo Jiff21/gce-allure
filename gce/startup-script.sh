@@ -47,12 +47,12 @@ cd /home/pythonapp
 #git clone https://github.com/GoogleCloudPlatform/getting-started-python.git /opt/app
 git clone https://github.com/Jiff21/gce-allure.git /home/pythonapp/app
 cd /home/pythonapp/app
-git checkout -b feature/tild-path origin/feature/tild-path
+git checkout -b feature/log-path origin/feature/log-path
 
 # Set ownership to newly created account
 chown -R pythonapp:pythonapp /home/pythonapp/app/
-# sudo chmod +x /home/pythonapp/app/
-# sudo chmod g+s /home/pythonapp/app/
+sudo chmod +x /home/pythonapp/app/
+sudo chmod g+s /home/pythonapp/app/
 # sudo apt-get install acl
 # sudo setfacl -Rm g:pythonapp:rwX /home/pythonapp/app/
 # sudo setfacl -d -Rm g:pythonapp:rwX /home/pythonapp/app/
