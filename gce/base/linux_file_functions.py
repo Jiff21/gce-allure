@@ -121,7 +121,9 @@ def create_report(folder_name):
         folder_name,
         'report'
     )
-    generated_command = 'sudo allure generate %s -o %s --clean' % (
+    import getpass
+    log.info(getpass.getuser())
+    generated_command = 'allure generate %s -o %s --clean' % (
                 results_path,
                 report_path
     )

@@ -64,7 +64,6 @@ chown -R pythonapp:pythonapp /home/pythonapp/app/
 # Python environment setup
 virtualenv -p python3 /home/pythonapp/app/gce/env
 source /home/pythonapp/app/gce/env/bin/activate
-# /home/pythonapp/app/gce/env/bin/pip install -r /home/pythonapp/app/gce/requirements.txt
 pip3 install -r /home/pythonapp/app/gce/requirements.txt
 
 
