@@ -50,7 +50,14 @@ cd /home/pythonapp/app
 git checkout -b feature/tild-path origin/feature/tild-path
 
 # Set ownership to newly created account
-chown -R pythonapp:pythonapp /home/pythonapp/app
+chown -R pythonapp:pythonapp /home/pythonapp/app/
+# sudo chmod +x /home/pythonapp/app/
+# sudo chmod g+s /home/pythonapp/app/
+# sudo apt-get install acl
+# sudo setfacl -Rm g:pythonapp:rwX /home/pythonapp/app/
+# sudo setfacl -d -Rm g:pythonapp:rwX /home/pythonapp/app/
+
+# sudo chown -R jeff:jeff /home/pythonapp/app
 
 # Python environment setup
 virtualenv -p python3 /home/pythonapp/app/gce/env
@@ -59,7 +66,6 @@ source /home/pythonapp/app/gce/env/bin/activate
 pip3 install -r /home/pythonapp/app/gce/requirements.txt
 
 
-# sudo chown -R jeff:jeff /home/pythonapp/app
 
 # Put supervisor configuration in proper place
 cp /home/pythonapp/app/gce/python-app.conf /etc/supervisor/conf.d/python-app.conf
