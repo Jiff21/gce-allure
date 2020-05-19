@@ -159,7 +159,9 @@ def create_report(folder_name):
         universal_newlines=True,
         shell=True
     )
+    # Slightly worried this doesn't wait long enough on server
     outs, errs = process.communicate(timeout=120)
+    process.wait()
     if errs == None:
         log.info('sucess: %s' % outs)
         flash('Report Created at ' + os.path.join(
@@ -169,8 +171,7 @@ def create_report(folder_name):
         ) + '/report/index.html')
     else:
         log.info('Generate Report Errored: %s ' % errs)
-        log.exception('An exception occurred: %s'.format(errs))
-        log.critical('An exception occurred: %s'.format(errs))
+        log.exception('An exception occurred: %s' % errs)
         flash('Error occurred %s ' %  errs)
 
 
