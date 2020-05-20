@@ -66,7 +66,8 @@ virtualenv -p python3 /home/pythonapp/app/gce/env
 source /home/pythonapp/app/gce/env/bin/activate
 pip3 install -r /home/pythonapp/app/gce/requirements.txt
 
-
+echo "Allure version $(allure --version)"
+export PYTHONPATH='/usr/bin/'
 
 # Put supervisor configuration in proper place
 cp /home/pythonapp/app/gce/python-app.conf /etc/supervisor/conf.d/python-app.conf

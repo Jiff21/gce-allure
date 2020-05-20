@@ -154,6 +154,7 @@ def create_report(folder_name):
     #     log.info('failure: %s - %s ' % (outs, errs))
     process = subprocess.Popen(
         generated_command,
+        executable='/bin/bash',
         stdout=PIPE,
         stderr=PIPE,
         universal_newlines=True,
