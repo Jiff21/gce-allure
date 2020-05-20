@@ -36,42 +36,35 @@ export LANG=C.UTF-8
 sudo apt-get update -y && sudo apt-get install allure  -y
 echo "Allure version is $(allure --version)"
 
-
-
 # Account to own server process
 useradd -m -d /home/pythonapp pythonapp
 
 # Fetch source code
 export HOME=/home/pythonapp
 cd /home/pythonapp
-sudo chmod +x /home/pythonapp/
-sudo chmod g+s /home/pythonapp/
+# Think these were unnecessary just had Path issues
+# sudo chmod +x /home/pythonapp/
+# sudo chmod g+s /home/pythonapp/
 
-#git clone https://github.com/GoogleCloudPlatform/getting-started-python.git /opt/app
 git clone https://github.com/Jiff21/gce-allure.git /home/pythonapp/app
 cd /home/pythonapp/app
 git checkout -b feature/log-path origin/feature/log-path
 
 # Set ownership to newly created account
 chown -R pythonapp:pythonapp /home/pythonapp/app/
-
-# sudo apt-get install acl
-# sudo setfacl -Rm g:pythonapp:rwX /home/pythonapp/app/
-# sudo setfacl -d -Rm g:pythonapp:rwX /home/pythonapp/app/
-
+#Debugging
 # sudo chown -R jeff:jeff /home/pythonapp/app
 
 # Python environment setup
 virtualenv -p python3 /home/pythonapp/app/gce/env
 source /home/pythonapp/app/gce/env/bin/activate
 pip3 install -r /home/pythonapp/app/gce/requirements.txt
-ln -s /usr/bin/allure /home/pythonapp/app/gce/env/bin/allure
+# Sym Link Idea not working but maybe a pathing issue
+# ln -s /usr/bin/allure /home/pythonapp/app/gce/env/bin/allure
 
 echo "Allure version $(allure --version)"
-export PYTHONPATH="/usr/bin/"
-export PATH="/env/bin:$PATH"
-export PATH="/usr/bin:$PATH"
-
+# export PYTHONPATH="/home/pythonapp/app/gce:$PYTHONPATH"
+# echo "export PATH='/usr/bin/:/env/bin:/home/pythonapp/app/gce:$PATH'" >> /etc/profile
 # Put supervisor configuration in proper place
 cp /home/pythonapp/app/gce/python-app.conf /etc/supervisor/conf.d/python-app.conf
 
