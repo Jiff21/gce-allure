@@ -124,7 +124,7 @@ def create_report(folder_name):
     )
     import getpass
     log.info('Python running as: %s' % getpass.getuser())
-    generated_command = 'allure generate %s -o %s --clean' % (
+    generated_command = '/usr/bin/allure generate %s -o %s --clean' % (
                 results_path,
                 report_path
     )
@@ -154,7 +154,6 @@ def create_report(folder_name):
     #     log.info('failure: %s - %s ' % (outs, errs))
     process = subprocess.Popen(
         generated_command,
-        executable='/bin/bash',
         stdout=PIPE,
         stderr=PIPE,
         universal_newlines=True,
