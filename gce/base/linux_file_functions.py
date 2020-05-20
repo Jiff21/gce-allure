@@ -124,7 +124,7 @@ def create_report(folder_name):
     )
     import getpass
     log.info('Python running as: %s' % getpass.getuser())
-    generated_command = '/usr/bin/allure generate %s -o %s --clean' % (
+    generated_command = 'allure generate %s -o %s --clean' % (
                 results_path,
                 report_path
     )
