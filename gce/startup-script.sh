@@ -37,7 +37,8 @@ sudo apt-get update -y && sudo apt-get install allure  -y
 echo "Allure version is $(allure --version)"
 
 # Account to own server process
-useradd -m -d /home/pythonapp pythonapp
+useradd -m -d /home/pythonapp -s /bin/bash -p kadkfdklfdbiuqidwuwdxuibskabksdbdlksgadsgal  pythonapp
+sudo useradd -D | grep -i shell
 
 # Fetch source code
 export HOME=/home/pythonapp
@@ -64,7 +65,8 @@ pip3 install -r /home/pythonapp/app/gce/requirements.txt
 
 echo "Allure version $(allure --version)"
 # export PYTHONPATH="/home/pythonapp/app/gce:$PYTHONPATH"
-# echo "export PATH='/usr/bin/:/env/bin:/home/pythonapp/app/gce:$PATH'" >> /etc/profile
+# echo "export PATH='/usr/bin:/env/bin:/home/pythonapp/app/gce:$PATH'" >> /etc/profile
+# echo "export PATH='/usr/bin/:/env/bin/:/home/pythonapp/app/gce:$PATH'" >> /home/pythonapp/.bashrc
 # Put supervisor configuration in proper place
 cp /home/pythonapp/app/gce/python-app.conf /etc/supervisor/conf.d/python-app.conf
 
