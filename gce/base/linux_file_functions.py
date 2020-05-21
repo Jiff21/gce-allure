@@ -127,7 +127,8 @@ def create_report(folder_name):
     # )
     # generated_command = ['/usr/bin/allure', 'generate', results_path, '-o', report_path, '--clean']
     # Only runs allure
-    generated_command = ['/bin/bash', '-c', 'allure', 'generate', results_path, '-o', report_path, '--clean']
+    # generated_command = ['/bin/bash', '-c', 'allure', 'generate', results_path, '-o', report_path, '--clean']
+    generated_command = ['allure', 'generate', results_path, '-o', report_path, '--clean']
     # generated_command = [
     #     '/bin/bash',
     #     '-c',
@@ -148,7 +149,7 @@ def create_report(folder_name):
     # )
     process = subprocess.Popen(
         generated_command,
-        # executable='/usr/bin/allure',
+        executable='/bin/bash',
         stdout=PIPE,
         stderr=PIPE,
         universal_newlines=True,
