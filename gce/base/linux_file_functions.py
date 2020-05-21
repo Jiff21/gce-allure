@@ -125,17 +125,17 @@ def create_report(folder_name):
     #             results_path,
     #             report_path
     # )
-    # generated_command = ['/usr/bin/allure', 'generate', results_path, '-o', report_path, '--clean']
+    generated_command = ['/usr/bin/allure', 'generate', results_path, '-o', report_path, '--clean']
     # Only runs allure
     # generated_command = ['/bin/bash', '-c', 'allure', 'generate', results_path, '-o', report_path, '--clean']
-    generated_command = [
-        '/bin/bash',
-        '-c',
-        'allure generate %s -o %s --clean' % (
-                    results_path,
-                    report_path
-        )
-    ]
+    # generated_command = [
+    #     '/bin/bash',
+    #     '-c',
+    #     'allure generate %s -o %s --clean' % (
+    #                 results_path,
+    #                 report_path
+    #     )
+    # ]
     log.info('Time to create a report with command:\n%s'
           % str(generated_command)
     )
@@ -148,10 +148,11 @@ def create_report(folder_name):
     # )
     process = subprocess.Popen(
         generated_command,
+        # executable='/usr/bin/allure',
         stdout=PIPE,
         stderr=PIPE,
         universal_newlines=True,
-        shell=True
+        shell=False
     )
     # Slightly worried this doesn't wait long enough on server
     outs, errs = process.communicate(timeout=120)
