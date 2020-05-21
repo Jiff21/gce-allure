@@ -153,6 +153,7 @@ def create_report(folder_name):
         stdout=PIPE,
         stderr=PIPE,
         universal_newlines=True,
+        env={"PATH": "/usr/bin"},
         shell=True
     )
     # Slightly worried this doesn't wait long enough on server
