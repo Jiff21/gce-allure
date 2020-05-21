@@ -94,7 +94,6 @@ def create_report(folder_name):
     )
     if os.path.isdir(report_history_path):
         log.info('Copying History to Results File.')
-        print('Copying History to Results File.', file=sys.stdout)
         # cp - R report_history_path results_history
         generated_command = 'cp -R %s %s' % (
             report_history_path,
@@ -122,8 +121,6 @@ def create_report(folder_name):
         folder_name,
         'report'
     )
-    import getpass
-    log.info('Python running as: %s' % getpass.getuser())
     # generated_command = 'allure generate %s -o %s --clean' % (
     #             results_path,
     #             report_path
