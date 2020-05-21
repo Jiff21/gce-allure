@@ -42,12 +42,10 @@ sudo useradd -D -s /bin/bash
 # Account to own server process
 useradd -m -d /home/pythonapp -s /bin/bash  pythonapp
 # Set any extra path here.
-export PATH="$PATH:/usr/bin/env"  >> /home/pythonapp/.bashrc
-export PYTHONPATH="$PATH"  >> /home/pythonapp/.bashrc
+echo export PATH=$PATH:/usr/bin/env  >> /home/pythonapp/.bashrc
+echo "export PYTHONPATH=$PATH"  >> /home/pythonapp/.bashrc
 source  /home/pythonapp/.bashrc
-echo "$PYTHONPATH"
-# Check shell
-# sudo useradd -D | grep -i shell
+echo "python path is $PYTHONPATH"
 
 # Fetch source code
 export HOME=/home/pythonapp
@@ -70,8 +68,6 @@ pip3 install -r /home/pythonapp/app/gce/requirements.txt
 # ln -s /usr/bin/allure /home/pythonapp/app/gce/env/bin/allure
 
 echo "Allure version $(allure --version)"
-# export PYTHONPATH="/home/pythonapp/app/gce:$PYTHONPATH"
-# echo "export PATH='/usr/bin:/env/bin:/home/pythonapp/app/gce:$PATH'" >> /etc/profile
 
 # Put supervisor configuration in proper place
 cp /home/pythonapp/app/gce/python-app.conf /etc/supervisor/conf.d/python-app.conf
