@@ -125,13 +125,13 @@ def create_report(folder_name):
     #             results_path,
     #             report_path
     # )
-    generated_command = ['/usr/bin/allure', 'generate', results_path, '-o', report_path, '--clean']
+    # generated_command = ['/usr/bin/allure', 'generate', results_path, '-o', report_path, '--clean']
     # Only runs allure
-    # generated_command = ['/bin/bash', '-c', 'allure', 'generate', results_path, '-o', report_path, '--clean']
+    generated_command = ['/bin/bash', '-c', 'allure', 'generate', results_path, '-o', report_path, '--clean']
     # generated_command = [
     #     '/bin/bash',
     #     '-c',
-    #     'allure generate %s -o %s --clean' % (
+    #     '"allure generate %s -o %s --clean"' % (
     #                 results_path,
     #                 report_path
     #     )
