@@ -36,9 +36,16 @@ export LANG=C.UTF-8
 sudo apt-get update -y && sudo apt-get install allure  -y
 echo "Allure version is $(allure --version)"
 
+
+# Maybe default shell will help Python
+sudo useradd -D -s /bin/bash
 # Account to own server process
 useradd -m -d /home/pythonapp -s /bin/bash  pythonapp
+# Set any extra path here.
 export PATH="$PATH:/usr/bin/env"  >> /home/pythonapp/.bashrc
+export PYTHONPATH="$PATH"  >> /home/pythonapp/.bashrc
+source  /home/pythonapp/.bashrc
+echo "$PYTHONPATH"
 # Check shell
 # sudo useradd -D | grep -i shell
 
