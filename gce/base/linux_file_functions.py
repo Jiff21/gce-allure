@@ -110,6 +110,16 @@ def create_report(folder_name):
         process.wait()
     else:
         log.info('No history to copy')
+
+
+    process = subprocess.Popen(
+        'which env',
+        stderr=subprocess.STDOUT,
+        shell=True
+        )
+    outs, errs = process.communicate(timeout=120)
+    process.wait()
+    log.info('Out and errss for which env are %s%s' % (outs, errs))
     # Create Report from current json and history
     results_path = os.path.join(
         UPLOAD_FOLDER,
