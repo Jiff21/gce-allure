@@ -112,17 +112,28 @@ def create_report(folder_name):
         log.info('No history to copy')
 
     process = subprocess.Popen(
-        'which env',
+        ['/usr/bin/which', 'env'],
+        stdout=PIPE,
+        stderr=PIPE,
+        # universal_newlines=True,
+        # env={'PATH': '/usr/bin'},
+        shell=False
+    )
+    outs, errs = process.communicate()
+    log.info('outs and errs for which env were %s%s' % (outs, errs))
+    process = subprocess.Popen(
+        ['allure', '--version'],
         stdout=PIPE,
         stderr=PIPE,
         universal_newlines=True,
-        # env={'PATH': '/usr/bin'},
-        shell=True
+        executable='/bin/bash',
+        env={'PYTHONPATH': '/usr/bin'},
+        shell=False
     )
-    outs, errs = process.communicate(timeout=120)
+    outs, errs = process.communicate()
     process.wait()
+    log.info('outs and errs for allure version were %s%s' % (outs, errs))
 
-    log.info('Out and errss for which env are %s%s' % (outs, errs))
     # Create Report from current json and history
     results_path = os.path.join(
         UPLOAD_FOLDER,
@@ -170,7 +181,7 @@ def create_report(folder_name):
         shell=False
     )
     # Slightly worried this doesn't wait long enough on server
-    outs, errs = process.communicate(timeout=120)
+    outs, errs = process.communicate()
     process.wait()
     if errs == None:
         log.info('sucess: %s' % outs)

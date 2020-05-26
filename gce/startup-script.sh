@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 sudo tee /etc/google-fluentd/config.d/test-unstructured-log.conf <<EOF
 <source>
     @type tail
@@ -49,7 +50,6 @@ echo "python path is $PYTHONPATH"
 
 # Fetch source code
 export HOME=/home/pythonapp
-cd /home/pythonapp
 
 git clone https://github.com/Jiff21/gce-allure.git /home/pythonapp/app
 cd /home/pythonapp/app
