@@ -16,8 +16,6 @@ UPLOAD_FOLDER = os.path.join(
 )
 
 FLASK_SECRET = os.environ.get('FLASK_SECRET', 'fake-secret')
-CLOUD_STORAGE_BUCKET = os.environ.get('CLOUD_STORAGE_BUCKET', 'fake-bucket-name')
-
 
 # Setup Loger
 log_format = 'p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s'

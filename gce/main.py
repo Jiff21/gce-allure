@@ -11,16 +11,14 @@ from base.app_engine_functions import copy_history_to_storage
 from base.linux_file_functions import create_local_folder, delete_local_folder
 from base.linux_file_functions import delete_json_folder_content
 from base.linux_file_functions import create_report, local_file_uploader
-from base.first_run import get_existing_buckets
 from google.cloud import error_reporting
 from google.cloud import storage
-from settings import  CLOUD_STORAGE_BUCKET, FLASK_SECRET
+from settings import FLASK_SECRET
 from settings import UPLOAD_FOLDER, ROOT_DIR, _ENV
 from werkzeug.utils import secure_filename
 
 
 # False writes to local storage.
-IS_APPENGINE = os.environ.get('IS_APPENGINE', False)
 ALLOWED_EXTENSIONS = set(['json', 'properties'])
 
 
@@ -101,13 +99,6 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@app.before_first_request
-def before_first_request():
-    if IS_APPENGINE == 'True':
-        gcs = storage.Client()
-        get_existing_buckets(gcs)
-
-
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(
@@ -164,11 +155,7 @@ def upload_file():
             # create json file and message where it can be found
             project_name = request.form['project'].lower()
             filename = secure_filename(file.filename)
-            if IS_APPENGINE == 'True':
-                gcs = storage.Client()
-                app_engine_file_uploader(gcs, project_name, filename, file)
-            else:
-                local_file_uploader(project_name, filename, file)
+            local_file_uploader(project_name, filename, file)
             return render_template('upload_file.html')
     return render_template('upload_file.html')
 
@@ -213,10 +200,6 @@ def delete_project():
                 app.config['UPLOAD_FOLDER'],
                 folder_name
             )
-            # Make sure folder doesn't already exist
-            if IS_APPENGINE == 'True':
-                gcs = storage.Client()
-                delete_app_engine_bucket(gcs, folder_name)
             delete_local_folder(folder_name, folder_path)
             return render_template('delete_project.html')
     return render_template('delete_project.html')
@@ -266,21 +249,7 @@ def build_report():
                 flash('Local Folder does not exist')
                 return render_template('build_report.html')
             else:
-                # Need to add app engine Logic
-                if IS_APPENGINE == 'True':
-                    # Delete pre-existing folder content
-                    log.info('Deleting old files at %s' %
-                          str(os.path.join(folder_path, 'json'))
-                          )
-                    delete_json_folder_content(
-                        os.path.join(folder_path, 'json')
-                    )
-                    # Then Copy the JSON IN Bucket:
-                    gcs = storage.Client()
-                    copy_bucket_json_to_local_folders(gcs, folder_name)
                 create_report(folder_name)
-                if IS_APPENGINE == 'True':
-                    copy_history_to_storage(gcs, folder_name)
             return render_template('build_report.html')
     return render_template('build_report.html')
 
