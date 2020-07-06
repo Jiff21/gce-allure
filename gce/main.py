@@ -4,10 +4,6 @@ import logging
 import sys
 from flask import Flask, flash, request, redirect, url_for, render_template
 from flask import send_from_directory, session, send_file
-from base.app_engine_functions import app_engine_file_uploader
-from base.app_engine_functions import delete_app_engine_bucket
-from base.app_engine_functions import copy_bucket_json_to_local_folders
-from base.app_engine_functions import copy_history_to_storage
 from base.linux_file_functions import create_local_folder, delete_local_folder
 from base.linux_file_functions import delete_json_folder_content
 from base.linux_file_functions import create_report, local_file_uploader
@@ -27,7 +23,7 @@ log.info('Logging setup in SEARCHFORTHIS1')
 
 
 # Create a projects folder
-# REplace with UPLOAD_FOLDER?
+# Replace with UPLOAD_FOLDER?
 if os.path.isdir(os.path.join(
     os.path.abspath(os.path.dirname(__file__)),
     'projects'
@@ -78,21 +74,6 @@ app.secret_key = FLASK_SECRET
 
 if 'prod' not in _ENV:
     app.testing = True
-
-# # Configure logging
-# if app.testing:
-#     log_format = '[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s'
-#     logging.basicConfig(
-#         format=log_format,
-#         filename='/tmp/test-unstructured-log.log',
-#         level=os.environ.get('LOG_LEVEL', 'INFO')
-#     )
-#     client = google.cloud.logging.Client()
-#     client.get_default_handler()
-#     client.setup_logging()
-#     log = logging.getLogger('Allure-Hub')
-#     log.info('Logging setup in SEARCHFORTHIS1')
-
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -178,7 +159,6 @@ def new_project():
                 folder_name
             )
             create_local_folder(folder_name, folder_path)
-            # No need to create folder on App Engine
             return render_template('create_project.html')
     return render_template('create_project.html')
 
@@ -259,9 +239,6 @@ def errors():
     raise Exception('This is an intentional exception.')
 
 
-# Add an error handler that reports exceptions to Stackdriver Error
-# Reporting. Note that this error handler is only used when debug
-# is False
 @app.errorhandler(500)
 def server_error(e):
     client = error_reporting.Client()
@@ -272,20 +249,9 @@ def server_error(e):
     See logs for full stacktrace.
     """.format(e), 500
 
-# @app.errorhandler(500)
-# def server_error(e):
-#     logging.exception('An error occurred during a request.')
-#     return """
-#     An internal error occurred: <pre>{}</pre>
-#     See logs for full stacktrace.
-#     """.format(e), 500
-
 
 if __name__ == '__main__':
     app.run()
-    # Suggested for logging from
-    # https://medium.com/@trstringer/logging-flask-and-gunicorn-the-manageable-way-2e6f0b8beb2f
-    # only keep if I need that logging.
     gunicorn_logger = logging.getLogger('gunicorn.error')
     app.logger.handlers = gunicorn_logger.handlers
     app.logger.setLevel(gunicorn_logger.level)
