@@ -95,15 +95,15 @@ def create_report(folder_name):
     if os.path.isdir(report_history_path):
         log.info('Copying History to Results File.')
         # cp - R report_history_path results_history
-        generated_command = 'cp -R %s %s' % (
+        copy_history_command = 'cp -R %s %s' % (
             report_history_path,
             results_history
             )
         log.info('Copying History to Results File. With Command:\n%s'
-              % generated_command
+              % copy_history_command
         )
         process = subprocess.Popen(
-            generated_command,
+            copy_history_command,
             stderr=subprocess.STDOUT,
             shell=True
             )
@@ -149,9 +149,6 @@ def create_report(folder_name):
     #             results_path,
     #             report_path
     # )
-    generated_command = ['/usr/bin/allure', 'generate', results_path, '-o', report_path, '--clean']
-    # generated_command = ['/usr/local/bin/allure', 'generate', results_path, '-o', report_path, '--clean']
-
 
     # Only runs allure
     # generated_command = ['/bin/bash', '-c', 'allure', 'generate', results_path, '-o', report_path, '--clean']
@@ -165,7 +162,7 @@ def create_report(folder_name):
     #                 report_path
     #     )
     # ]
-    log.info('Time to create a report with command:\n%s'
+    log.info('Time to create a report with command: %s'
           % str(generated_command)
     )
     # process = subprocess.Popen(
@@ -175,14 +172,26 @@ def create_report(folder_name):
     #     universal_newlines=True,
     #     shell=True
     # )
+    generated_command = 'allure generate %s -o %s --clean' % (
+                results_path,
+                report_path
+    )
     process = subprocess.Popen(
         generated_command,
-        stdout=PIPE,
-        stderr=PIPE,
-        universal_newlines=True,
-        # env={"PATH": "/usr/bin"},
-        shell=False
+        stderr=subprocess.STDOUT,
+        shell=True
     )
+    # Also tried
+    # generated_command = ['/usr/bin/allure', 'generate', results_path, '-o', report_path, '--clean']
+    # generated_command = ['/usr/local/bin/allure', 'generate', results_path, '-o', report_path, '--clean']
+    # process = subprocess.Popen(
+    #     generated_command,
+    #     stdout=PIPE,
+    #     stderr=PIPE,
+    #     universal_newlines=True,
+    #     # env={"PATH": "/usr/bin"},
+    #     shell=False
+    # )
     # Slightly worried this doesn't wait long enough on server
     outs, errs = process.communicate()
     process.wait()
