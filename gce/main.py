@@ -19,7 +19,7 @@ ALLOWED_EXTENSIONS = set(['json', 'properties'])
 
 
 log = logging.getLogger('Allure-Hub')
-log.info('Logging setup in SEARCHFORTHIS1')
+log.info('Logging setup in main')
 
 
 # Create a projects folder
