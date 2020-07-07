@@ -190,20 +190,19 @@ def create_report(folder_name):
     #     # env={"PATH": "/usr/bin"},
     #     shell=False
     # )
-    # Slightly worried this doesn't wait long enough on server
-    # outs, errs = process.communicate()
-    # process.wait()
-    # if errs == None:
-    #     log.info('sucess: %s' % outs)
-    #     flash('Report Created at ' + os.path.join(
-    #         request.host,
-    #         'projects',
-    #         folder_name
-    #     ) + '/report/index.html')
-    # else:
-    #     log.info('Generate Report Errored: %s ' % errs)
-    #     log.exception('An exception occurred: %s' % errs)
-    #     flash('Error occurred %s ' %  errs)
+    process.wait()
+    outs, errs = process.communicate()
+    if errs == None:
+        log.info('sucess: %s' % outs)
+        flash('Report Created at ' + os.path.join(
+            request.host,
+            'projects',
+            folder_name
+        ) + '/report/index.html')
+    else:
+        log.info('Generate Report Errored: %s ' % errs)
+        log.exception('An exception occurred: %s' % errs)
+        flash('Error occurred %s ' %  errs)
 
 
 
