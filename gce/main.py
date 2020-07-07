@@ -93,7 +93,7 @@ def favicon():
 
 @app.route('/', methods=['GET'])
 def index():
-    log.info('Getting index SEARCHFORTHIS2')
+    log.info('Running app.route for index')
     return render_template(
         'index.html',
         current_projects=get_projects(
@@ -104,6 +104,7 @@ def index():
 
 @app.route('/qa_admin', methods=['GET'])
 def qa_admin():
+    log.info('Running app.route for qa_admin')
     return render_template(
         'qa_admin.html',
         current_projects=get_projects(
