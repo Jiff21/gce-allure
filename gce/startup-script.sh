@@ -53,7 +53,8 @@ export HOME=/home/pythonapp
 
 git clone https://github.com/Jiff21/gce-allure.git /home/pythonapp/app
 cd /home/pythonapp/app
-git checkout -b feature/log-path origin/feature/log-path
+# git checkout -b feature/log-path origin/feature/log-path
+git checkout -b feature/persist-disk-only origin/feature/persist-disk-only
 
 # Set ownership to newly created account
 chown -R pythonapp:pythonapp /home/pythonapp/app/
