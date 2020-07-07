@@ -165,31 +165,32 @@ def create_report(folder_name):
     #                 report_path
     #     )
     # ]
-    generated_command = 'allure generate %s -o %s --clean' % (
-                results_path,
-                report_path
-    )
-    log.info('Time to create a report with command: %s'
-          % str(generated_command)
-    )
-    process = subprocess.Popen(
-        generated_command,
-        stdout=PIPE,
-        stderr=PIPE,
-        universal_newlines=True,
-        shell=True
-    )
-    # Also tried
-    # generated_command = ['/usr/bin/allure', 'generate', results_path, '-o', report_path, '--clean']
-    # generated_command = ['/usr/local/bin/allure', 'generate', results_path, '-o', report_path, '--clean']
+    # generated_command = 'allure generate %s -o %s --clean' % (
+    #             results_path,
+    #             report_path
+    # )
+    # log.info('Time to create a report with command: %s'
+    #       % str(generated_command)
+    # )
     # process = subprocess.Popen(
     #     generated_command,
     #     stdout=PIPE,
     #     stderr=PIPE,
     #     universal_newlines=True,
-    #     # env={"PATH": "/usr/bin"},
-    #     shell=False
+    #     shell=True
     # )
+    # Also tried
+    generated_command = ['/usr/bin/allure', 'generate', results_path, '-o', report_path, '--clean']
+    # Runs locally through endpoint.
+    # generated_command = ['/usr/local/bin/allure', 'generate', results_path, '-o', report_path, '--clean']
+    process = subprocess.Popen(
+        generated_command,
+        stdout=PIPE,
+        stderr=PIPE,
+        universal_newlines=True,
+        # env={"PATH": "/usr/bin"},
+        shell=False
+    )
     process.wait()
     outs, errs = process.communicate()
     if errs == None:
