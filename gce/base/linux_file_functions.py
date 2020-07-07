@@ -165,33 +165,20 @@ def create_report(folder_name):
     #                 report_path
     #     )
     # ]
-    log.info('Time to create a report with command: %s'
-          % str(generated_command)
-    )
-    # process = subprocess.Popen(
-    #     generated_command,
-    #     stdout=PIPE,
-    #     stderr=PIPE,
-    #     universal_newlines=True,
-    #     shell=True
-    # )
     generated_command = 'allure generate %s -o %s --clean' % (
                 results_path,
                 report_path
     )
+    log.info('Time to create a report with command: %s'
+          % str(generated_command)
+    )
     process = subprocess.Popen(
         generated_command,
-        stderr=subprocess.STDOUT,
+        stdout=PIPE,
+        stderr=PIPE,
+        universal_newlines=True,
         shell=True
     )
-    process.wait()
-    flash('Report Created at ' + os.path.join(
-        request.host,
-        'projects',
-        folder_name
-    ) + '/report/index.html')
-
-
     # Also tried
     # generated_command = ['/usr/bin/allure', 'generate', results_path, '-o', report_path, '--clean']
     # generated_command = ['/usr/local/bin/allure', 'generate', results_path, '-o', report_path, '--clean']
