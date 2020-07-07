@@ -111,28 +111,31 @@ def create_report(folder_name):
     else:
         log.info('No history to copy')
 
-    process = subprocess.Popen(
-        ['/usr/bin/which', 'env'],
-        stdout=PIPE,
-        stderr=PIPE,
-        # universal_newlines=True,
-        # env={'PATH': '/usr/bin'},
-        shell=False
-    )
-    outs, errs = process.communicate()
-    log.info('outs and errs for which env were %s%s' % (outs, errs))
-    process = subprocess.Popen(
-        ['allure', '--version'],
-        stdout=PIPE,
-        stderr=PIPE,
-        universal_newlines=True,
-        executable='/bin/bash',
-        env={'PYTHONPATH': '/usr/bin'},
-        shell=False
-    )
-    outs, errs = process.communicate()
-    process.wait()
-    log.info('outs and errs for allure version were %s%s' % (outs, errs))
+####### Can't even run which Env?
+    # process = subprocess.Popen(
+    #     ['/usr/bin/which', 'env'],
+    #     stdout=PIPE,
+    #     stderr=PIPE,
+    #     # universal_newlines=True,
+    #     # env={'PATH': '/usr/bin'},
+    #     shell=False
+    # )
+    # outs, errs = process.communicate()
+    # log.info('outs and errs for which env were %s%s' % (outs, errs))
+    # process = subprocess.Popen(
+    #     ['allure', '--version'],
+    #     stdout=PIPE,
+    #     stderr=PIPE,
+    #     universal_newlines=True,
+    #     executable='/bin/bash',
+    #     env={'PYTHONPATH': '/usr/bin'},
+    #     shell=False
+    # )
+    # outs, errs = process.communicate()
+    # process.wait()
+    # log.info('outs and errs for allure version were %s%s' % (outs, errs))
+####### Can't even run which Env?
+
 
     # Create Report from current json and history
     results_path = os.path.join(
@@ -181,6 +184,14 @@ def create_report(folder_name):
         stderr=subprocess.STDOUT,
         shell=True
     )
+    process.wait()
+    flash('Report Created at ' + os.path.join(
+        request.host,
+        'projects',
+        folder_name
+    ) + '/report/index.html')
+
+
     # Also tried
     # generated_command = ['/usr/bin/allure', 'generate', results_path, '-o', report_path, '--clean']
     # generated_command = ['/usr/local/bin/allure', 'generate', results_path, '-o', report_path, '--clean']
@@ -193,19 +204,19 @@ def create_report(folder_name):
     #     shell=False
     # )
     # Slightly worried this doesn't wait long enough on server
-    outs, errs = process.communicate()
-    process.wait()
-    if errs == None:
-        log.info('sucess: %s' % outs)
-        flash('Report Created at ' + os.path.join(
-            request.host,
-            'projects',
-            folder_name
-        ) + '/report/index.html')
-    else:
-        log.info('Generate Report Errored: %s ' % errs)
-        log.exception('An exception occurred: %s' % errs)
-        flash('Error occurred %s ' %  errs)
+    # outs, errs = process.communicate()
+    # process.wait()
+    # if errs == None:
+    #     log.info('sucess: %s' % outs)
+    #     flash('Report Created at ' + os.path.join(
+    #         request.host,
+    #         'projects',
+    #         folder_name
+    #     ) + '/report/index.html')
+    # else:
+    #     log.info('Generate Report Errored: %s ' % errs)
+    #     log.exception('An exception occurred: %s' % errs)
+    #     flash('Error occurred %s ' %  errs)
 
 
 
