@@ -187,13 +187,13 @@ def create_report(folder_name):
         generated_command,
         stdout=PIPE,
         stderr=PIPE,
-        universal_newlines=True,
+        # universal_newlines=True,
         # env={"PATH": "/usr/bin"},
         shell=False
     )
     process.wait()
     outs, errs = process.communicate()
-    if errs == None:
+    if errs:
         log.info('sucess: %s' % outs)
         flash('Report Created at ' + os.path.join(
             request.host,
