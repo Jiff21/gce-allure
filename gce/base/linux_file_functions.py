@@ -1,10 +1,15 @@
 import os
+import logging
 import shutil
 import subprocess
 import sys
 from flask import flash, request, redirect, render_template
 from settings import UPLOAD_FOLDER, ROOT_DIR
+from subprocess import PIPE
 
+
+log = logging.getLogger('Linux-File-Function')
+log.info('Logging setup in Linux-File-Function')
 
 def create_local_folder(folder_name, folder_path):
     '''Create project folders and message where it can be found.
@@ -60,10 +65,9 @@ def local_file_uploader(project_name, filename, file):
              created and you have typed correct name.'''
         )
         return render_template('upload_file.html')
-    print('Adding files to %s' % os.path.join(
+    log.debug('Adding files to %s' % os.path.join(
         UPLOAD_FOLDER,
-        sub_path),
-        file=sys.stderr
+        sub_path)
     )
     file.save(os.path.join(UPLOAD_FOLDER, sub_path))
     flash('File created at: ' + os.path.join(
@@ -89,24 +93,50 @@ def create_report(folder_name):
         'history'
     )
     if os.path.isdir(report_history_path):
-        print('Copying History to Results File.', file=sys.stdout)
+        log.info('Copying History to Results File.')
         # cp - R report_history_path results_history
-        generated_command = 'cp -R %s %s' % (
+        copy_history_command = 'cp -R %s %s' % (
             report_history_path,
             results_history
             )
-        print('Copying History to Results File. With Command:\n%s'
-              % generated_command,
-              file=sys.stdout
-              )
+        log.info('Copying History to Results File. With Command:\n%s'
+              % copy_history_command
+        )
         process = subprocess.Popen(
-            generated_command,
+            copy_history_command,
             stderr=subprocess.STDOUT,
             shell=True
             )
         process.wait()
     else:
-        print('No history to copy', file=sys.stdout)
+        log.info('No history to copy')
+
+####### Can't even run which Env?
+    # process = subprocess.Popen(
+    #     ['/usr/bin/which', 'env'],
+    #     stdout=PIPE,
+    #     stderr=PIPE,
+    #     # universal_newlines=True,
+    #     # env={'PATH': '/usr/bin'},
+    #     shell=False
+    # )
+    # outs, errs = process.communicate()
+    # log.info('outs and errs for which env were %s%s' % (outs, errs))
+    # process = subprocess.Popen(
+    #     ['allure', '--version'],
+    #     stdout=PIPE,
+    #     stderr=PIPE,
+    #     universal_newlines=True,
+    #     executable='/bin/bash',
+    #     env={'PYTHONPATH': '/usr/bin'},
+    #     shell=False
+    # )
+    # outs, errs = process.communicate()
+    # process.wait()
+    # log.info('outs and errs for allure version were %s%s' % (outs, errs))
+####### Can't even run which Env?
+
+
     # Create Report from current json and history
     results_path = os.path.join(
         UPLOAD_FOLDER,
@@ -118,21 +148,67 @@ def create_report(folder_name):
         folder_name,
         'report'
     )
-    generated_command = 'allure generate %s -o %s --clean' % (
-                results_path,
-                report_path
-    )
+    # generated_command = 'allure generate %s -o %s --clean' % (
+    #             results_path,
+    #             report_path
+    # )
+
+    # Only runs allure
+    # generated_command = ['/bin/bash', '-c', 'allure', 'generate', results_path, '-o', report_path, '--clean']
+    # generated_command = ['/usr/share/allure/bin/allure', 'generate', results_path, '-o', report_path, '--clean']
+    # generated_command = ['generate', results_path, '-o', report_path, '--clean']
+    # generated_command = [
+    #     '/bin/bash',
+    #     '-c',
+    #     '"allure generate %s -o %s --clean"' % (
+    #                 results_path,
+    #                 report_path
+    #     )
+    # ]
+    # generated_command = 'allure generate %s -o %s --clean' % (
+    #             results_path,
+    #             report_path
+    # )
+    # log.info('Time to create a report with command: %s'
+    #       % str(generated_command)
+    # )
+    # process = subprocess.Popen(
+    #     generated_command,
+    #     stdout=PIPE,
+    #     stderr=PIPE,
+    #     universal_newlines=True,
+    #     shell=True
+    # )
+    # Also tried
+    generated_command = ['/usr/bin/allure', 'generate', results_path, '-o', report_path, '--clean']
+    # Runs locally through endpoint.
+    # generated_command = ['/usr/local/bin/allure', 'generate', results_path, '-o', report_path, '--clean']
     process = subprocess.Popen(
         generated_command,
-        stderr=subprocess.STDOUT,
-        shell=True
+        stdout=PIPE,
+        stderr=PIPE,
+        universal_newlines=True,
+        env={"PATH": "/bin:/usr/bin"},
+        shell=False
     )
     process.wait()
-    flash('Report Created at ' + os.path.join(
-        request.host,
-        'projects',
-        folder_name
-    ) + '/report/index.html')
+    outs, errs = process.communicate()
+    if outs:
+        log.info('sucess: %s' % outs)
+    if errs:
+        log.info('errs: %s' % errs)
+    if not errs:
+        log.info('sucess: %s' % outs)
+        flash('Report Created at ' + os.path.join(
+            request.host,
+            'projects',
+            folder_name
+        ) + '/report/index.html')
+    else:
+        log.info('Generate Report Errored: %s ' % errs)
+        log.exception('An exception occurred: %s' % errs)
+        flash('Error occurred %s ' %  errs)
+
 
 
 def write_files_locally(project_name, filename, file):
@@ -146,9 +222,9 @@ def write_files_locally(project_name, filename, file):
              created and you have typed correct name.'''
         )
         return render_template('upload_file.html')
-    print('Adding files to %s' %
-          os.path.join(UPLOAD_FOLDER, sub_path),
-          file=sys.stdout)
+    log.info('Adding files to %s' %
+          os.path.join(UPLOAD_FOLDER, sub_path)
+    )
     file.save(os.path.join(UPLOAD_FOLDER, sub_path))
     flash('File created at: ' + os.path.join(
         request.host,

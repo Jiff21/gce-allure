@@ -16,8 +16,20 @@ bash deploy.sh
 ```
 
 
-
-
+While Debugging should just be
+```
+source secrets/dev.env
+INSTANCE_NAME=ce-test-[Increment]
+gcloud compute --project=$PROJECT_ID instances create $INSTANCE_NAME \
+    --image=ubuntu-1604-xenial-v20200429 \
+    --image-project=ubuntu-os-cloud \
+    --machine-type=f1-micro \
+    --no-boot-disk-auto-delete \
+    --scopes userinfo-email,cloud-platform \
+    --metadata-from-file startup-script=startup-script.sh \
+    --zone $ZONE \
+    --tags http-server,https-server
+```
 
 
 TODO

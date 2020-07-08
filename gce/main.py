@@ -4,38 +4,32 @@ import logging
 import sys
 from flask import Flask, flash, request, redirect, url_for, render_template
 from flask import send_from_directory, session, send_file
-from google.cloud import storage
-from base.app_engine_functions import app_engine_file_uploader
-from base.app_engine_functions import delete_app_engine_bucket
-from base.app_engine_functions import copy_bucket_json_to_local_folders
-from base.app_engine_functions import copy_history_to_storage
 from base.linux_file_functions import create_local_folder, delete_local_folder
 from base.linux_file_functions import delete_json_folder_content
 from base.linux_file_functions import create_report, local_file_uploader
-from base.first_run import get_existing_buckets
-from settings import  CLOUD_STORAGE_BUCKET, FLASK_SECRET
-from settings import UPLOAD_FOLDER, ROOT_DIR
+from google.cloud import error_reporting
+from google.cloud import storage
+from settings import FLASK_SECRET
+from settings import UPLOAD_FOLDER, ROOT_DIR, _ENV
 from werkzeug.utils import secure_filename
 
 
-
-IS_APPENGINE = os.environ.get('IS_APPENGINE', True)
+# False writes to local storage.
 ALLOWED_EXTENSIONS = set(['json', 'properties'])
 
+
+log = logging.getLogger('Allure-Hub')
+log.info('Logging setup in main')
+
+
 # Create a projects folder
-# REplace with UPLOAD_FOLDER?
-logging.info(UPLOAD_FOLDER)
+# Replace with UPLOAD_FOLDER?
 if os.path.isdir(os.path.join(
     os.path.abspath(os.path.dirname(__file__)),
     'projects'
 )) is False:
-    logging.debug(
-        'Creating Projects Folder at %s' % UPLOAD_FOLDER,
-        file=sys.stdout
-    )
-    print(
-        'Creating Projects Folder at %s' % UPLOAD_FOLDER,
-        file=sys.stdout
+    log.info(
+        'Creating Projects Folder at %s' % UPLOAD_FOLDER
     )
     os.makedirs(os.path.join(
         os.path.abspath(os.path.dirname(__file__)),
@@ -69,6 +63,7 @@ def get_projects(path):
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+app.config['PROPAGATE_EXCEPTIONS'] = True
 app.jinja_loader = jinja2.FileSystemLoader(os.path.join(
     os.path.abspath(os.path.dirname(__file__)),
     'html'
@@ -76,27 +71,13 @@ app.jinja_loader = jinja2.FileSystemLoader(os.path.join(
 
 
 app.secret_key = FLASK_SECRET
-# Suggested for logging from
-# https://medium.com/@trstringer/logging-flask-and-gunicorn-the-manageable-way-2e6f0b8beb2f
-# only keep if I need that logging.
 
-
-if __name__ != '__main__':
-    gunicorn_logger = logging.getLogger('gunicorn.error')
-    app.logger.handlers = gunicorn_logger.handlers
-    app.logger.setLevel(gunicorn_logger.level)
-
+if 'prod' not in _ENV:
+    app.testing = True
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-@app.before_first_request
-def before_first_request():
-    if IS_APPENGINE == 'True':
-        gcs = storage.Client()
-        get_existing_buckets(gcs)
 
 
 @app.route('/favicon.ico')
@@ -112,6 +93,7 @@ def favicon():
 
 @app.route('/', methods=['GET'])
 def index():
+    log.info('Running app.route for index')
     return render_template(
         'index.html',
         current_projects=get_projects(
@@ -122,6 +104,7 @@ def index():
 
 @app.route('/qa_admin', methods=['GET'])
 def qa_admin():
+    log.info('Running app.route for qa_admin')
     return render_template(
         'qa_admin.html',
         current_projects=get_projects(
@@ -133,6 +116,7 @@ def qa_admin():
 @app.route('/upload_file', methods=['GET', 'POST'])
 def upload_file():
     # Add this to save path, and add return directory as well.
+    log.info('Upload File')
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
@@ -153,11 +137,7 @@ def upload_file():
             # create json file and message where it can be found
             project_name = request.form['project'].lower()
             filename = secure_filename(file.filename)
-            if IS_APPENGINE == 'True':
-                gcs = storage.Client()
-                app_engine_file_uploader(gcs, project_name, filename, file)
-            else:
-                local_file_uploader(project_name, filename, file)
+            local_file_uploader(project_name, filename, file)
             return render_template('upload_file.html')
     return render_template('upload_file.html')
 
@@ -180,7 +160,6 @@ def new_project():
                 folder_name
             )
             create_local_folder(folder_name, folder_path)
-            # No need to create folder on App Engine
             return render_template('create_project.html')
     return render_template('create_project.html')
 
@@ -202,10 +181,6 @@ def delete_project():
                 app.config['UPLOAD_FOLDER'],
                 folder_name
             )
-            # Make sure folder doesn't already exist
-            if IS_APPENGINE == 'True':
-                gcs = storage.Client()
-                delete_app_engine_bucket(gcs, folder_name)
             delete_local_folder(folder_name, folder_path)
             return render_template('delete_project.html')
     return render_template('delete_project.html')
@@ -255,29 +230,21 @@ def build_report():
                 flash('Local Folder does not exist')
                 return render_template('build_report.html')
             else:
-                # Need to add app engine Logic
-                if IS_APPENGINE == 'True':
-                    # Delete pre-existing folder content
-                    print('Deleting old files at %s' %
-                          str(os.path.join(folder_path, 'json')),
-                          file=sys.stdout
-                          )
-                    delete_json_folder_content(
-                        os.path.join(folder_path, 'json')
-                    )
-                    # Then Copy the JSON IN Bucket:
-                    gcs = storage.Client()
-                    copy_bucket_json_to_local_folders(gcs, folder_name)
                 create_report(folder_name)
-                if IS_APPENGINE == 'True':
-                    copy_history_to_storage(gcs, folder_name)
             return render_template('build_report.html')
     return render_template('build_report.html')
 
 
+@app.route('/errors')
+def errors():
+    raise Exception('This is an intentional exception.')
+
+
 @app.errorhandler(500)
 def server_error(e):
-    logging.exception('An error occurred during a request.')
+    client = error_reporting.Client()
+    client.report_exception(
+        http_context=error_reporting.build_flask_context(request))
     return """
     An internal error occurred: <pre>{}</pre>
     See logs for full stacktrace.
@@ -286,3 +253,6 @@ def server_error(e):
 
 if __name__ == '__main__':
     app.run()
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(gunicorn_logger.level)
