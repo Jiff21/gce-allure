@@ -187,7 +187,7 @@ def create_report(folder_name):
         generated_command,
         stdout=PIPE,
         stderr=PIPE,
-        # universal_newlines=True,
+        universal_newlines=True,
         # env={"PATH": "/usr/bin"},
         shell=False
     )
