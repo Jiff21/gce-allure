@@ -10,8 +10,8 @@ Edit variables appropriately, then run deploy script to create compute engine
 instance and necessary firewall rules
 
 ```
-source secrets/dev.env
-cd gce
+source dev.env
+cd allure-report
 bash deploy.sh
 ```
 

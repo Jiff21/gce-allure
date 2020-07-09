@@ -6,6 +6,7 @@ import google.cloud.logging
 PROJECT_ID=os.getenv('PROJECT_ID', 'sf-qa-reports')
 ZONE=os.getenv('ZONE', 'us-west2-b')
 _ENV=os.getenv('_ENV', 'test')
+INSTANCE_NAME=os.getenv('INSTANCE_NAME', 'allure-hub')
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 

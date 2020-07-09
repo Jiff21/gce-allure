@@ -53,25 +53,20 @@ export HOME=/home/pythonapp
 
 git clone https://github.com/Jiff21/gce-allure.git /home/pythonapp/app
 cd /home/pythonapp/app
-# git checkout -b feature/log-path origin/feature/log-path
-git checkout -b feature/persist-disk-only origin/feature/persist-disk-only
+git checkout -b feature/cleanup1 origin/feature/cleanup1
 
 # Set ownership to newly created account
 chown -R pythonapp:pythonapp /home/pythonapp/app/
-#Debugging
-# sudo chown -R jeff:jeff /home/pythonapp/app
 
 # Python environment setup
-virtualenv -p python3 /home/pythonapp/app/gce/env
-source /home/pythonapp/app/gce/env/bin/activate
-pip3 install -r /home/pythonapp/app/gce/requirements.txt
-# Sym Link Idea not working but maybe a pathing issue
-# ln -s /usr/bin/allure /home/pythonapp/app/gce/env/bin/allure
+virtualenv -p python3 /home/pythonapp/app/allure-report/env
+source /home/pythonapp/app/allure-report/env/bin/activate
+pip3 install -r /home/pythonapp/app/allure-report/requirements.txt
 
 echo "Allure version $(allure --version)"
 
 # Put supervisor configuration in proper place
-cp /home/pythonapp/app/gce/python-app.conf /etc/supervisor/conf.d/python-app.conf
+cp /home/pythonapp/app/allure-report/python-app.conf /etc/supervisor/conf.d/python-app.conf
 
 # Start service via supervisorctl
 supervisorctl reread

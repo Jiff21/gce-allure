@@ -99,7 +99,7 @@ def create_report(folder_name):
             report_history_path,
             results_history
             )
-        log.info('Copying History to Results File. With Command:\n%s'
+        log.info('Copying History to Results File. With Command: %s'
               % copy_history_command
         )
         process = subprocess.Popen(
@@ -110,32 +110,6 @@ def create_report(folder_name):
         process.wait()
     else:
         log.info('No history to copy')
-
-####### Can't even run which Env?
-    # process = subprocess.Popen(
-    #     ['/usr/bin/which', 'env'],
-    #     stdout=PIPE,
-    #     stderr=PIPE,
-    #     # universal_newlines=True,
-    #     # env={'PATH': '/usr/bin'},
-    #     shell=False
-    # )
-    # outs, errs = process.communicate()
-    # log.info('outs and errs for which env were %s%s' % (outs, errs))
-    # process = subprocess.Popen(
-    #     ['allure', '--version'],
-    #     stdout=PIPE,
-    #     stderr=PIPE,
-    #     universal_newlines=True,
-    #     executable='/bin/bash',
-    #     env={'PYTHONPATH': '/usr/bin'},
-    #     shell=False
-    # )
-    # outs, errs = process.communicate()
-    # process.wait()
-    # log.info('outs and errs for allure version were %s%s' % (outs, errs))
-####### Can't even run which Env?
-
 
     # Create Report from current json and history
     results_path = os.path.join(
@@ -148,41 +122,15 @@ def create_report(folder_name):
         folder_name,
         'report'
     )
-    # generated_command = 'allure generate %s -o %s --clean' % (
-    #             results_path,
-    #             report_path
-    # )
-
-    # Only runs allure
-    # generated_command = ['/bin/bash', '-c', 'allure', 'generate', results_path, '-o', report_path, '--clean']
-    # generated_command = ['/usr/share/allure/bin/allure', 'generate', results_path, '-o', report_path, '--clean']
-    # generated_command = ['generate', results_path, '-o', report_path, '--clean']
-    # generated_command = [
-    #     '/bin/bash',
-    #     '-c',
-    #     '"allure generate %s -o %s --clean"' % (
-    #                 results_path,
-    #                 report_path
-    #     )
-    # ]
-    # generated_command = 'allure generate %s -o %s --clean' % (
-    #             results_path,
-    #             report_path
-    # )
-    # log.info('Time to create a report with command: %s'
-    #       % str(generated_command)
-    # )
-    # process = subprocess.Popen(
-    #     generated_command,
-    #     stdout=PIPE,
-    #     stderr=PIPE,
-    #     universal_newlines=True,
-    #     shell=True
-    # )
-    # Also tried
-    generated_command = ['/usr/bin/allure', 'generate', results_path, '-o', report_path, '--clean']
-    # Runs locally through endpoint.
-    # generated_command = ['/usr/local/bin/allure', 'generate', results_path, '-o', report_path, '--clean']
+    generated_command = [
+        '/usr/bin/allure',
+        'generate',
+        results_path,
+        '-o',
+        report_path,
+        '--clean'
+    ]
+    log.info('Creating allure report with: %s' % str(generated_command))
     process = subprocess.Popen(
         generated_command,
         stdout=PIPE,
@@ -193,10 +141,6 @@ def create_report(folder_name):
     )
     process.wait()
     outs, errs = process.communicate()
-    if outs:
-        log.info('sucess: %s' % outs)
-    if errs:
-        log.info('errs: %s' % errs)
     if not errs:
         log.info('sucess: %s' % outs)
         flash('Report Created at ' + os.path.join(
@@ -208,7 +152,6 @@ def create_report(folder_name):
         log.info('Generate Report Errored: %s ' % errs)
         log.exception('An exception occurred: %s' % errs)
         flash('Error occurred %s ' %  errs)
-
 
 
 def write_files_locally(project_name, filename, file):
